@@ -1,0 +1,28 @@
+# Virtual environment
+env/
+
+# Python specific
+*.pyc
+__pycache__/
+
+# IDEs and editors
+.vscode/
+.idea/
+*.sublime-workspace
+
+# Logs and databases
+*.log
+*.sqlite3
+
+# Environment variables
+.env
+
+# Pytest cache
+.pytest_cache/
+
+# Jupyter Notebooks
+.ipynb_checkpoints/
+
+# Django specific
+*.sqlite3
+test.sql
