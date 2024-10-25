@@ -1,13 +1,35 @@
 import sqlite3
 from flask import g
-
-DATABASE = 'services.db'
+from config import Config
 
 def get_db():
     db = getattr(g, '_database', None)
     if db is None:
-        db = g._database = sqlite3.connect(DATABASE)
+        db = g._database = sqlite3.connect(Config.DATABASE_NAME)
+        db.row_factory = sqlite3.Row
     return db
+
+def execute_query(query, args=(), fetch_one=False, fetch_all=False):
+    db = get_db()
+    cursor = db.cursor()
+    
+    try:
+        cursor.execute(query, args)
+        db.commit()
+
+        # Fetch results if needed
+        if fetch_one:
+            return cursor.fetchone()
+        elif fetch_all:
+            return cursor.fetchall()
+        
+    except sqlite3.Error as e:
+        db.rollback()  # Rollback transaction in case of error
+        raise RuntimeError(f"Database error: {e}")
+    finally:
+        cursor.close()
+
+    return None
 
 def init_db(app):
     with app.app_context():
