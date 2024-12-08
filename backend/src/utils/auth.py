@@ -2,9 +2,10 @@ import jwt
 import datetime
 from config import Config
 
-def create_token(username: str):
+def create_token(user):
     payload = {
-        "username": username,
+        "username": user["username"],
+        "role": user["role"],
         "iat": datetime.datetime.now(),
         "exp": datetime.datetime.now() + datetime.timedelta(days=30)
     }

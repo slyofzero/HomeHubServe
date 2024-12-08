@@ -52,10 +52,8 @@ def login_controller(request: Request):
 
         if not check_password_hash(user["password"], password):
             return jsonify({"message": "Invalid password"}), 401
-        
-        print(user["username"])
 
-        token = create_token(user["username"])
+        token = create_token(user)
         return jsonify({"message": "User logged in successfully", "token": token}), 200
     except RuntimeError as e: 
         return jsonify({"message": str(e)}), 500
