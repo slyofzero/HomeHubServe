@@ -37,8 +37,18 @@
             <RouterLink class="nav-link" to="/profile">Profile</RouterLink>
           </li>
           <li class="nav-item">
-            <button class="btn btn-outline-danger btn-sm">Logout</button>
+            <RouterLink to="/register" class="btn btn-outline-success btn-sm"
+              >Register</RouterLink
+            >
           </li>
+          <li class="nav-item">
+            <RouterLink to="/login" class="btn bg-dark text-white px-3 btn-sm"
+              >Login</RouterLink
+            >
+          </li>
+          <!-- <li class="nav-item">
+            <button class="btn btn-outline-danger btn-sm">Logout</button>
+          </li> -->
         </ul>
       </div>
     </nav>

@@ -5,7 +5,7 @@ import Header from "./components/Header.vue";
 <template>
   <Header></Header>
 
-  <div class="p-4 mt-4 mx-auto max-w"><RouterView></RouterView></div>
+  <div class="p-md-4 mt-4 mx-auto max-w"><RouterView></RouterView></div>
 </template>
 
 <style scoped>
