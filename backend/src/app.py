@@ -1,11 +1,15 @@
 from flask import Flask
-from models import init_db
+from models import db
+from config import Config
 from routes import auth_bp
 
 app = Flask(__name__)
+app.config['SQLALCHEMY_DATABASE_URI'] = Config.DATABASE_URI
 
-# Initialize the database
-init_db(app)
+with app.app_context():
+    db.init_app(app)
+    db.create_all()
+    print("Database tables created.")
 
 app.register_blueprint(auth_bp, url_prefix="/auth")
 
