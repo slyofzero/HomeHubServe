@@ -9,11 +9,11 @@ def register_controller(request: Request):
         name, mobile, password, address, pincode = (body.get(key) for key in ["name", "mobile", "password", "address", "pincode"])
         
         if not all([name, mobile, password, address, pincode]):
-            return jsonify({"error": "Missing required fields"}), 400
+            return jsonify({"message": "Missing required fields"}), 400
         
         user = User.query.filter_by(mobile=mobile).first()
         if user is not None:
-            return jsonify({"error": "Mobile number is already registered"}), 409
+            return jsonify({"message": "Mobile number is already registered"}), 409
         
         new_user = User(
             name=name,
