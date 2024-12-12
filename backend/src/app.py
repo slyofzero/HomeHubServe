@@ -1,7 +1,7 @@
-from flask import Flask
+from flask import Flask, Blueprint
 from models import db
 from config import Config
-from routes import auth_bp
+from routes import auth_bp, user_bp
 from flask_cors import CORS
 
 app = Flask(__name__)
@@ -14,7 +14,11 @@ with app.app_context():
 
 CORS(app)
 
-app.register_blueprint(auth_bp, url_prefix="/auth")
+api_bp = Blueprint("api", __name__, url_prefix="/api")
+api_bp.register_blueprint(auth_bp, url_prefix="/auth")
+api_bp.register_blueprint(user_bp, url_prefix="/user")
+
+app.register_blueprint(api_bp)
 
 if __name__ == "__main__":
     app.run(debug=True)

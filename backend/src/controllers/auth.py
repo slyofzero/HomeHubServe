@@ -43,7 +43,7 @@ def login_controller(request: Request):
 
         # Check if username is unique
         if user is None:
-            return jsonify({"message": "Invalid username"}), 400
+            return jsonify({"message": "Invalid user"}), 400
 
         if not check_password_hash(user.password, password):
             return jsonify({"message": "Invalid password"}), 401
