@@ -36,29 +36,58 @@
           <li class="nav-item">
             <RouterLink class="nav-link" to="/profile">Profile</RouterLink>
           </li>
-          <li class="nav-item">
+          <li v-if="!isLoggedIn" class="nav-item">
             <RouterLink to="/register" class="btn btn-outline-success btn-sm"
               >Register</RouterLink
             >
           </li>
-          <li class="nav-item">
+          <li v-if="!isLoggedIn" class="nav-item">
             <RouterLink to="/login" class="btn bg-dark text-white px-3 btn-sm"
               >Login</RouterLink
             >
           </li>
-          <!-- <li class="nav-item">
+          <li v-if="isLoggedIn" @click="logout" class="nav-item">
             <button class="btn btn-outline-danger btn-sm">Logout</button>
-          </li> -->
+          </li>
         </ul>
       </div>
     </nav>
   </header>
 </template>
 
-<script>
+<script lang="ts">
 import { RouterLink } from "vue-router";
+import { JWT_KEY_NAME } from "../utils/constants";
+import { clientFetcher } from "../utils/api";
+import { UserApiRes, useUserStore } from "../stores";
 
 export default {
   name: "Header",
+  computed: {
+    isLoggedIn() {
+      return useUserStore().isLoggedIn;
+    },
+  },
+  methods: {
+    logout() {
+      localStorage.removeItem(JWT_KEY_NAME);
+      const userStore = useUserStore();
+      userStore.clearUserInfo();
+    },
+  },
+  async created() {
+    try {
+      const userDataUrl = `${import.meta.env.VITE_API_URL}/user/me`;
+      const userData = await clientFetcher<UserApiRes>(userDataUrl);
+      const userStore = useUserStore();
+      if (userData.response === 200) {
+        userStore.setUserInfo(userData.data.data);
+      } else {
+        userStore.clearUserInfo();
+      }
+    } catch (error) {
+      console.error("Failed to fetch user data:", error);
+    }
+  },
 };
 </script>

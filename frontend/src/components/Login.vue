@@ -37,7 +37,7 @@
 
 <script>
 import router from "../router";
-import { apiPoster } from "../utils/api";
+import { apiPoster, clientFetcher } from "../utils/api";
 import { JWT_KEY_NAME } from "../utils/constants";
 
 export default {
