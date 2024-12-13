@@ -7,7 +7,7 @@ def create_service(request: Request):
     try:
         body = request.get_json()
         headers = request.headers
-        name, description, pay_per_h = (body.get(key) for key in ["name", "description", "pay_per_h"])
+        name, description, price = (body.get(key) for key in ["name", "description", "price"])
         auth_token = headers.get("authorization")
         user, is_token_valid = decode_token(auth_token)
 
@@ -19,7 +19,7 @@ def create_service(request: Request):
         new_service = Service(
             name=name,
             description=description,
-            pay_per_h=pay_per_h
+            price=price
         )
 
         db.session.add(new_service)

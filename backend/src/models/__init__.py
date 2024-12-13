@@ -21,7 +21,7 @@ class Service(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.String, nullable=False)
     description = db.Column(db.Text, nullable=False)
-    pay_per_h = db.Column(db.Integer, nullable=False)
+    price = db.Column(db.Integer, nullable=False)
 
 class Professional(db.Model):
     __tablename__ = 'professional'
@@ -41,7 +41,6 @@ class ServiceRequest(db.Model):
     __tablename__ = 'service_request'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.String, nullable=False)
-    duration = db.Column(db.Integer, nullable=False)
     date = db.Column(db.Date, nullable=False)
     time = db.Column(db.String, nullable=False)
     status = db.Column(db.String, db.CheckConstraint("status IN ('REJECTED', 'PENDING', 'ACCEPTED')"), default='PENDING')
