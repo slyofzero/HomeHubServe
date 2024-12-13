@@ -69,7 +69,9 @@ export default {
     async function getServices() {
       const url = `${import.meta.env.VITE_API_URL}/service`;
       const response = await clientFetcher<ServiceApiRes>(url);
-      services.value = response.data.data.slice(0, 4); // Update reactive state
+      if (response.response === 200) {
+        services.value = response.data.data.slice(0, 4); // Update reactive state
+      }
     }
 
     onMounted(() => getServices());

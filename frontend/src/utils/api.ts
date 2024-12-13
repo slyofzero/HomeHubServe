@@ -31,6 +31,7 @@ export async function clientPoster<T>(url: string, body?: any) {
   const token = localStorage.getItem(JWT_KEY_NAME) || "";
   const headers = new Headers();
   headers.append("authorization", token);
+  headers.append("Content-Type", "application/json");
 
   const response = await fetch(url, {
     method: "POST",
