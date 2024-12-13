@@ -8,6 +8,7 @@ export interface UserInfo {
   mobile: string;
   name: string;
   pincode: number;
+  role: "ADMIN" | "PROFESSIONAL" | "CUSTOMER";
 }
 
 export interface UserApiRes {

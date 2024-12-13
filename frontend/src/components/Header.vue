@@ -21,7 +21,7 @@
 
       <!-- Collapsible Content -->
       <div class="collapse navbar-collapse" id="navbarNav">
-        <ul class="navbar-nav ms-auto d-flex align-items-center gap-4">
+        <ul class="navbar-nav ms-auto d-flex align-items-center gap-1 gap-md-4">
           <li class="nav-item">
             <RouterLink class="nav-link active" aria-current="page" to="/"
               >Home</RouterLink
@@ -33,8 +33,15 @@
           <li class="nav-item">
             <RouterLink class="nav-link" to="/summary">Summary</RouterLink>
           </li>
-          <li class="nav-item">
-            <RouterLink class="nav-link" to="/profile">Profile</RouterLink>
+          <li v-if="isAdmin" class="nav-item">
+            <RouterLink class="nav-link special-link" to="/admin"
+              >Admin Dashboard</RouterLink
+            >
+          </li>
+          <li v-if="isProfessional" class="nav-item">
+            <RouterLink class="nav-link special-link" to="/professional"
+              >Professional Dashboard</RouterLink
+            >
           </li>
           <li v-if="!isLoggedIn" class="nav-item">
             <RouterLink to="/register" class="btn btn-outline-success btn-sm"
@@ -56,7 +63,6 @@
 </template>
 
 <script lang="ts">
-import { RouterLink } from "vue-router";
 import { JWT_KEY_NAME } from "../utils/constants";
 import { clientFetcher } from "../utils/api";
 import { UserApiRes, useUserStore } from "../stores";
@@ -66,6 +72,12 @@ export default {
   computed: {
     isLoggedIn() {
       return useUserStore().isLoggedIn;
+    },
+    isAdmin() {
+      return useUserStore().$state.user?.role === "ADMIN";
+    },
+    isProfessional() {
+      return useUserStore().$state.user?.role === "PROFESSIONAL";
     },
   },
   methods: {
@@ -91,3 +103,10 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+.special-link {
+  font-weight: 600;
+  text-decoration: underline;
+}
+</style>

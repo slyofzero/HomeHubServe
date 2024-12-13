@@ -41,6 +41,7 @@ import { apiPoster, clientFetcher } from "../utils/api";
 import { JWT_KEY_NAME } from "../utils/constants";
 
 export default {
+  name: "Login",
   data() {
     return {
       form: {

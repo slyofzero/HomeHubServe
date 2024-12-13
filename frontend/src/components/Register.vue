@@ -68,6 +68,7 @@
 import { apiPoster } from "../utils/api";
 
 export default {
+  name: "Register",
   data() {
     return {
       form: {
