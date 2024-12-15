@@ -2,6 +2,9 @@ from flask import Request, jsonify
 from models import db, Service
 from utils.auth import decode_token
 
+def to_dict(service):
+    return {column.name: getattr(service, column.name) for column in service.__table__.columns}
+
 # Admin only
 def create_service(request: Request):
     try:
@@ -32,10 +35,71 @@ def create_service(request: Request):
 def get_services(request: Request):
     try:
         services = Service.query.order_by(Service.name.asc()).all()
-        def to_dict(service):
-            return {column.name: getattr(service, column.name) for column in service.__table__.columns}
-
         services_json = [to_dict(service) for service in services]
         return jsonify({"message": "Fetched services successfully", "data": services_json}), 200
+    except RuntimeError as e: 
+        return jsonify({"message": str(e)}), 500
+
+def get_single_service(request: Request, service_id: int):
+    try:
+        service = Service.query.filter_by(id=service_id).first()
+        
+        if service is None:
+            return jsonify({"message": f"Service Id {service_id} not found"}), 404    
+
+        service_json = [to_dict(service)]
+        return jsonify({"message": "Fetched services successfully", "data": service_json}), 200
+    except RuntimeError as e: 
+        return jsonify({"message": str(e)}), 500
+
+def delete_service(request: Request, service_id: int):
+    try:
+        headers = request.headers
+        auth_token = headers.get("authorization")
+        user, is_token_valid = decode_token(auth_token)
+
+        if not is_token_valid:
+            return jsonify({"message": user["message"]}), 401
+        elif user["role"] != "ADMIN":
+            return jsonify({"message": "User not allowed"}), 401
+        
+        service = Service.query.filter_by(id=service_id).first()
+
+        if service is None:
+            return jsonify({"message": f"Service Id {service_id} not found"}), 404   
+
+        db.session.delete(service)
+        db.session.commit()
+
+        return jsonify({"message": f"Service {service_id} deleted"}), 200
+    except RuntimeError as e: 
+        return jsonify({"message": str(e)}), 500
+    
+def update_service(request: Request, service_id: int):
+    try:
+        headers = request.headers
+        auth_token = headers.get("authorization")
+        user, is_token_valid = decode_token(auth_token)
+        body = request.get_json()
+
+        if not is_token_valid:
+            return jsonify({"message": user["message"]}), 401
+        elif user["role"] != "ADMIN":
+            return jsonify({"message": "User not allowed"}), 401
+        elif not body:
+            return jsonify({"message": "No data provided for update"}), 400
+        
+        service = Service.query.filter_by(id=service_id).first()
+
+        if service is None:
+            return jsonify({"message": f"Service Id {service_id} not found"}), 404   
+
+        for key, value in body.items():
+            if hasattr(service, key):
+                setattr(service, key, value)
+
+        db.session.commit()
+
+        return jsonify({"message": f"Service {service_id} updated"}), 200
     except RuntimeError as e: 
         return jsonify({"message": str(e)}), 500
