@@ -9,7 +9,7 @@
         >
           <h4>Services</h4>
           <button
-            @click="showModal = true"
+            @click="showCreateModal = true"
             class="btn btn-success btn-sm mt-2 mt-md-0"
           >
             + New Service
@@ -31,8 +31,18 @@
                 <td>{{ service.name }}</td>
                 <td>{{ service.price }}</td>
                 <td>
-                  <button class="btn btn-primary btn-sm me-2">Edit</button>
-                  <button class="btn btn-danger btn-sm">Delete</button>
+                  <button
+                    @click="handleEditClick(service.id)"
+                    class="btn btn-primary btn-sm me-2"
+                  >
+                    Edit
+                  </button>
+                  <button
+                    @click="deleteService(service.id)"
+                    class="btn btn-danger btn-sm"
+                  >
+                    Delete
+                  </button>
                 </td>
               </tr>
             </tbody>
@@ -99,36 +109,57 @@
   </div>
 
   <NewService
-    v-if="showModal"
-    :showModal="showModal"
-    @close="showModal = false"
+    v-if="showCreateModal"
+    :showModal="showCreateModal"
+    @close="showCreateModal = false"
+    @refreshServices="refreshServices"
+  />
+
+  <EditService
+    v-if="showEditModal"
+    :showModal="showEditModal"
+    :service="serviceToEdit"
+    @close="showEditModal = false"
+    @refreshServices="refreshServices"
   />
 </template>
 
 <script lang="ts">
-import { ref } from "vue";
-import NewService from "../modals/service/NewService.vue";
-import { clientFetcher } from "../utils/api";
+import { ref, watch } from "vue";
+import { clientDelete, useApi } from "../utils/api";
 import { IService, ServiceApiRes } from "../types";
+import NewService from "../modals/service/NewService.vue";
+import EditService from "../modals/service/EditService.vue";
 
 export default {
   name: "AdminDashboard",
   setup() {
-    const showModal = ref(false);
+    const showCreateModal = ref(false);
+    const showEditModal = ref(false);
+    const serviceToEdit = ref<number | null>(null);
 
+    // -------------------- Services --------------------
     const services = ref<IService[]>([]);
     const servicesUrl = `${import.meta.env.VITE_API_URL}/service`;
-    (async function () {
-      const servicesRes = await clientFetcher<ServiceApiRes>(servicesUrl);
-      if (servicesRes.response === 200) {
-        services.value = servicesRes.data.data;
-      }
-    })();
+    const { data: serviceRes, mutate: servicesMutate } =
+      useApi<ServiceApiRes>(servicesUrl);
 
-    // const services = ref([
-    //   { id: 1, name: "Service 1", price: "$100" },
-    //   { id: 2, name: "Service 2", price: "$200" },
-    // ]);
+    const refreshServices = () => servicesMutate();
+
+    watch(serviceRes, () => {
+      const new_services = serviceRes.value?.data.data;
+      services.value = new_services ? new_services : [];
+    });
+
+    const handleEditClick = (serviceId: number) => {
+      showEditModal.value = true;
+      serviceToEdit.value = serviceId;
+    };
+
+    const deleteService = async (id: number) => {
+      const deleteRes = await clientDelete(`${servicesUrl}/${id}`);
+      if (deleteRes.response === 200) servicesMutate();
+    };
 
     const professionals = ref([
       { id: 1, name: "John Doe", experience: 5, serviceName: "Service 1" },
@@ -150,10 +181,21 @@ export default {
       },
     ]);
 
-    return { services, professionals, serviceRequests, showModal };
+    return {
+      services,
+      professionals,
+      serviceRequests,
+      showCreateModal,
+      refreshServices,
+      deleteService,
+      showEditModal,
+      serviceToEdit,
+      handleEditClick,
+    };
   },
   components: {
     NewService,
+    EditService,
   },
 };
 </script>

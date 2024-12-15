@@ -58,23 +58,20 @@
 </template>
 
 <script lang="ts">
-import { onMounted, ref } from "vue";
-import { clientFetcher } from "../utils/api";
+import { ref, watch } from "vue";
+import { useApi } from "../utils/api";
 import { IService, ServiceApiRes } from "../types";
 
 export default {
   setup() {
-    const services = ref<IService[]>([]); // Reactive state for storing services
+    const services = ref<IService[]>([]);
+    const servicesUrl = `${import.meta.env.VITE_API_URL}/service`;
+    const { data: serviceRes } = useApi<ServiceApiRes>(servicesUrl);
 
-    async function getServices() {
-      const url = `${import.meta.env.VITE_API_URL}/service`;
-      const response = await clientFetcher<ServiceApiRes>(url);
-      if (response.response === 200) {
-        services.value = response.data.data.slice(0, 4); // Update reactive state
-      }
-    }
-
-    onMounted(() => getServices());
+    watch(serviceRes, () => {
+      const new_services = serviceRes.value?.data.data;
+      services.value = new_services ? new_services : [];
+    });
 
     return { services }; // Expose services to the template
   },

@@ -64,8 +64,9 @@
 
 <script lang="ts">
 import { JWT_KEY_NAME } from "../utils/constants";
-import { clientFetcher } from "../utils/api";
+import { useApi } from "../utils/api";
 import { UserApiRes, useUserStore } from "../stores";
+import { watch } from "vue";
 
 export default {
   name: "Header",
@@ -87,19 +88,20 @@ export default {
       userStore.clearUserInfo();
     },
   },
-  async created() {
-    try {
-      const userDataUrl = `${import.meta.env.VITE_API_URL}/user/me`;
-      const userData = await clientFetcher<UserApiRes>(userDataUrl);
-      const userStore = useUserStore();
-      if (userData.response === 200) {
-        userStore.setUserInfo(userData.data.data);
+  setup() {
+    const userStore = useUserStore();
+    const userDataUrl = `${import.meta.env.VITE_API_URL}/user/me`;
+    const { data: userDataRes } = useApi<UserApiRes>(userDataUrl);
+
+    watch(userDataRes, () => {
+      const response = userDataRes.value?.response;
+      if (response === 200) {
+        const userData = userDataRes.value?.data.data;
+        if (userData) userStore.setUserInfo(userData);
       } else {
         userStore.clearUserInfo();
       }
-    } catch (error) {
-      console.error("Failed to fetch user data:", error);
-    }
+    });
   },
 };
 </script>

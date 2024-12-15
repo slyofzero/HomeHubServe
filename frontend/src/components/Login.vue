@@ -35,9 +35,9 @@
   </div>
 </template>
 
-<script>
-import router from "../router";
-import { apiPoster, clientFetcher } from "../utils/api";
+<script lang="ts">
+import { ILoginRes } from "../types";
+import { apiPoster } from "../utils/api";
 import { JWT_KEY_NAME } from "../utils/constants";
 
 export default {
@@ -52,12 +52,12 @@ export default {
     };
   },
   methods: {
-    async loginUser(event) {
+    async loginUser(event: Event) {
       event.preventDefault();
       const url = `${import.meta.env.VITE_API_URL}/auth/login`;
 
       try {
-        const res = await apiPoster(url, this.form);
+        const res = await apiPoster<ILoginRes>(url, this.form);
 
         if (res.response >= 400) {
           this.errorMessage =

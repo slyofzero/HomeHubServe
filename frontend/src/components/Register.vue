@@ -64,7 +64,9 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
+import router from "../router";
+import { IApiRes } from "../types";
 import { apiPoster } from "../utils/api";
 
 export default {
@@ -82,18 +84,19 @@ export default {
     };
   },
   methods: {
-    async registerUser(event) {
+    async registerUser(event: Event) {
       event.preventDefault();
       const url = `${import.meta.env.VITE_API_URL}/auth/register`;
 
       try {
-        const res = await apiPoster(url, this.form);
+        const res = await apiPoster<IApiRes>(url, this.form);
 
         if (res.response >= 400) {
           this.errorMessage =
             res.data.message || "Invalid credentials. Please try again.";
         } else {
           this.errorMessage = "";
+          router.push("/login");
         }
       } catch (error) {
         this.errorMessage = "An unexpected error occurred. Please try again.";

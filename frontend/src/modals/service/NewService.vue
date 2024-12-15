@@ -23,7 +23,7 @@
 
           <!-- Modal Body -->
           <div class="modal-body">
-            <form @submit.prevent="submitForm">
+            <form @submit.prevent="(e: Event) => e.preventDefault()">
               <!-- Service Name -->
               <div class="mb-3">
                 <label for="serviceName" class="form-label">
@@ -108,10 +108,10 @@
   </div>
 </template>
 
-<script>
-import { toRef, watch } from "vue";
+<script lang="ts">
 import { clientPoster } from "../../utils/api";
 import router from "../../router";
+import { IApiRes } from "../../types";
 
 export default {
   name: "NewService",
@@ -127,11 +127,12 @@ export default {
     },
     async addModal() {
       const url = `${import.meta.env.VITE_API_URL}/service`;
-      const res = await clientPoster(url, this.formData);
+      const res = await clientPoster<IApiRes>(url, this.formData);
       if (res.response === 200) {
         this.closeModal();
         this.errorMessage = "";
         router.push("/admin");
+        this.$emit("refreshServices");
       } else {
         this.errorMessage = res.data.message || "Couldn't create a new service";
       }
