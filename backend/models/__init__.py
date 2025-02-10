@@ -29,6 +29,7 @@ class Professional(db.Model):
     name = db.Column(db.String, nullable=False)
     experience = db.Column(db.Integer, nullable=False)
     service_id = db.Column(db.Integer, db.ForeignKey('service.id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     description = db.Column(db.Text, nullable=False)
     pincode = db.Column(db.Integer, nullable=False)
     status = db.Column(db.String, db.CheckConstraint("status IN ('REJECTED', 'PENDING', 'ACCEPTED', 'BLOCKED')"), default='PENDING')

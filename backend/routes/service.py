@@ -10,12 +10,12 @@ service_bp = Blueprint(
 def create_service_route():
     return create_service(request)
 
-# For the register form
+# To get all services on the platform
 @service_bp.route("", methods=["GET"])
 def get_services_route():
     return get_services(request)
 
-# For the register form
+# To get, delete, update a service
 @service_bp.route("/<string:service_id>", methods=["GET", "DELETE", "PUT"])
 def delete_service_route(service_id):
     if request.method == "GET":
@@ -24,3 +24,4 @@ def delete_service_route(service_id):
         return delete_service(request, int(service_id))
     elif request.method == "PUT":
         return update_service(request, int(service_id))
+    
