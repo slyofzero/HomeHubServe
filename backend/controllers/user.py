@@ -20,7 +20,7 @@ def get_me(request: Request):
         user_dict["joined_on"] = int(datetime.combine(user_dict["joined_on"], datetime.min.time()).timestamp())
 
         return jsonify({"message": "User registered successfully", "data": user_dict}), 200
-    except RuntimeError as e: 
+    except Exception as e: 
         return jsonify({"message": str(e)}), 500
 
 # User only
@@ -39,7 +39,7 @@ def user_is_professional(request: Request):
         if professional is None:
             return jsonify({"message": False}), 200
         return jsonify({"message": True}), 200
-    except RuntimeError as e: 
+    except Exception as e: 
         return jsonify({"message": str(e)}), 500
 
 # User only
@@ -71,7 +71,7 @@ def update_user(request: Request):
         db.session.commit()
 
         return jsonify({"message": f"User {user_data.id} updated"}), 200
-    except RuntimeError as e: 
+    except Exception as e: 
         return jsonify({"message": str(e)}), 500
     
 # User only
@@ -96,5 +96,5 @@ def delete_user(request: Request):
         db.session.commit()
 
         return jsonify({"message": f"User {user_data.id} deleted"}), 200
-    except RuntimeError as e: 
+    except Exception as e: 
         return jsonify({"message": str(e)}), 500

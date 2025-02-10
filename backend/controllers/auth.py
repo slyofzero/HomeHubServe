@@ -27,7 +27,7 @@ def register_controller(request: Request):
         db.session.commit()
 
         return jsonify({"message": "User registered successfully"}), 200
-    except RuntimeError as e: 
+    except Exception as e: 
         return jsonify({"message": str(e)}), 500
 
 def login_controller(request: Request):
@@ -50,5 +50,5 @@ def login_controller(request: Request):
 
         token = create_token(user)
         return jsonify({"message": "User logged in successfully", "token": token}), 200
-    except RuntimeError as e: 
+    except Exception as e: 
         return jsonify({"message": str(e)}), 500

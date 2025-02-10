@@ -20,5 +20,5 @@ def create_admin():
 
         db.session.add(new_user)
         db.session.commit()
-    except RuntimeError as e:
+    except Exception as e:
         print(e)

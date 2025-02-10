@@ -38,8 +38,8 @@ def create_professional(request: Request):
         db.session.add(new_professional)
         db.session.commit()
 
-        return jsonify({"message": f"User {user.id} registered as professional."}), 200
-    except RuntimeError as e: 
+        return jsonify({"message": f"Your request to register as a professional has been sent."}), 200
+    except Exception as e: 
         return jsonify({"message": str(e)}), 500
 
 # User/All
@@ -65,7 +65,7 @@ def get_single_professional(request: Request, professional_id: int):
         else:
             return jsonify({"message": "Professional is not available for public view."}), 200
 
-    except RuntimeError as e: 
+    except Exception as e: 
         return jsonify({"message": str(e)}), 500
 
 # User only
@@ -88,7 +88,7 @@ def delete_professional(request: Request):
         db.session.commit()
 
         return jsonify({"message": f"Professional {professional.id} deleted"}), 200
-    except RuntimeError as e: 
+    except Exception as e: 
         return jsonify({"message": str(e)}), 500
 
 # User only
@@ -126,7 +126,7 @@ def update_professional(request: Request):
         db.session.commit()
 
         return jsonify({"message": f"Professional {professional.id} updated"}), 200
-    except RuntimeError as e: 
+    except Exception as e: 
         return jsonify({"message": str(e)}), 500
 
 # All
@@ -147,5 +147,5 @@ def get_professionals_for_service(request: Request, service_id: int):
         professionals = Professional.query.filter_by(service_id=service_id, status="ACCEPTED").all()
         professional_json = [to_dict(professional) for professional in professionals]
         return jsonify({"message": "Fetched professional successfully", "data": professional_json}), 200
-    except RuntimeError as e: 
+    except Exception as e: 
         return jsonify({"message": str(e)}), 500

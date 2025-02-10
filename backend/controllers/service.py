@@ -29,7 +29,7 @@ def create_service(request: Request):
         db.session.commit()
 
         return jsonify({"message": "New service created"}), 200
-    except RuntimeError as e: 
+    except Exception as e: 
         return jsonify({"message": str(e)}), 500
     
 # All
@@ -38,7 +38,7 @@ def get_services(request: Request):
         services = Service.query.order_by(Service.name.asc()).all()
         services_json = [to_dict(service) for service in services]
         return jsonify({"message": "Fetched services successfully", "data": services_json}), 200
-    except RuntimeError as e: 
+    except Exception as e: 
         return jsonify({"message": str(e)}), 500
 
 # All
@@ -51,7 +51,7 @@ def get_single_service(request: Request, service_id: int):
 
         service_json = [to_dict(service)]
         return jsonify({"message": "Fetched services successfully", "data": service_json}), 200
-    except RuntimeError as e: 
+    except Exception as e: 
         return jsonify({"message": str(e)}), 500
 
 # Admin only
@@ -75,7 +75,7 @@ def delete_service(request: Request, service_id: int):
         db.session.commit()
 
         return jsonify({"message": f"Service {service_id} deleted"}), 200
-    except RuntimeError as e: 
+    except Exception as e: 
         return jsonify({"message": str(e)}), 500
 
 # Admin only
@@ -105,5 +105,5 @@ def update_service(request: Request, service_id: int):
         db.session.commit()
 
         return jsonify({"message": f"Service {service_id} updated"}), 200
-    except RuntimeError as e: 
+    except Exception as e: 
         return jsonify({"message": str(e)}), 500
