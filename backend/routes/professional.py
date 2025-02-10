@@ -7,19 +7,20 @@ professional_bp = Blueprint(
 )
 
 # For the login form
-@professional_bp.route("", methods=["POST"])
+@professional_bp.route("", methods=["POST", "DELETE", "PUT"])
 def create_professional_route():
-    return create_professional(request)
+    if request.method == "POST":
+        return create_professional(request)
+    elif request.method == "DELETE":
+        return delete_professional(request)
+    elif request.method == "PUT":
+        return update_professional(request)
 
 # To get a single professional
-@professional_bp.route("/<string:professional_id>", methods=["GET", "DELETE", "PUT"])
-def delete_service_route(professional_id):
-    if request.method == "GET":
-        return get_single_professional(request, int(professional_id))
-    elif request.method == "DELETE":
-        return delete_professional(request, int(professional_id))
-    elif request.method == "PUT":
-        return update_professional(request, int(professional_id))
+@professional_bp.route("/<string:professional_id>", methods=["GET"])
+def get_single_professional_route(professional_id):
+    return get_single_professional(request, int(professional_id))
+
     
 # To get professionals for a service
 @service_bp.route("/<string:service_id>/professionals", methods=["GET"])

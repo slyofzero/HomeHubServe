@@ -32,6 +32,7 @@ def create_service(request: Request):
     except RuntimeError as e: 
         return jsonify({"message": str(e)}), 500
     
+# All
 def get_services(request: Request):
     try:
         services = Service.query.order_by(Service.name.asc()).all()
@@ -40,6 +41,7 @@ def get_services(request: Request):
     except RuntimeError as e: 
         return jsonify({"message": str(e)}), 500
 
+# All
 def get_single_service(request: Request, service_id: int):
     try:
         service = Service.query.filter_by(id=service_id).first()
@@ -52,6 +54,7 @@ def get_single_service(request: Request, service_id: int):
     except RuntimeError as e: 
         return jsonify({"message": str(e)}), 500
 
+# Admin only
 def delete_service(request: Request, service_id: int):
     try:
         headers = request.headers
@@ -74,7 +77,8 @@ def delete_service(request: Request, service_id: int):
         return jsonify({"message": f"Service {service_id} deleted"}), 200
     except RuntimeError as e: 
         return jsonify({"message": str(e)}), 500
-    
+
+# Admin only
 def update_service(request: Request, service_id: int):
     try:
         headers = request.headers

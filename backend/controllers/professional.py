@@ -16,12 +16,17 @@ def create_professional(request: Request):
             return jsonify({"message": user["message"]}), 401
         
         user = User.query.filter_by(mobile = user["mobile"]).first()
+        professional = Professional.query.filter_by(user_id=user.id).first()
+
+        if professional is not None:
+            return jsonify({"message": "You have already registerd as a professional."}), 400
+
         service = Service.query.filter_by(id=service_id).first()
 
         if service is None:
-            return jsonify({"message": "Please enter an existing service"}), 200
+            return jsonify({"message": "Please enter an existing service."}), 200
         
-        new_service = Professional(
+        new_professional = Professional(
             name=user.name,
             description=description,
             experience=experience,
@@ -30,10 +35,10 @@ def create_professional(request: Request):
             user_id=user.id
         )
 
-        db.session.add(new_service)
+        db.session.add(new_professional)
         db.session.commit()
 
-        return jsonify({"message": "New service created"}), 200
+        return jsonify({"message": f"User {user.id} registered as professional."}), 200
     except RuntimeError as e: 
         return jsonify({"message": str(e)}), 500
 
@@ -64,7 +69,7 @@ def get_single_professional(request: Request, professional_id: int):
         return jsonify({"message": str(e)}), 500
 
 # User only
-def delete_professional(request: Request, professional_id: int):
+def delete_professional(request: Request):
     try:
         headers = request.headers
         auth_token = headers.get("authorization")
@@ -73,19 +78,21 @@ def delete_professional(request: Request, professional_id: int):
         if not is_token_valid:
             return jsonify({"message": user["message"]}), 401
         
-        professional = Professional.query.filter_by(id = professional_id).first()
+        mobile = user["mobile"]
+        user_data = User.query.filter_by(mobile=mobile).first()
+        professional = Professional.query.filter_by(user_id=user_data.id).first()
         if professional is None:
-            return jsonify({"message": f"Professional Id {professional_id} not found"}), 404    
+            return jsonify({"message": f"Professional account for {mobile} not found"}), 404    
 
         db.session.delete(professional)
         db.session.commit()
 
-        return jsonify({"message": f"Professional {professional_id} deleted"}), 200
+        return jsonify({"message": f"Professional {professional.id} deleted"}), 200
     except RuntimeError as e: 
         return jsonify({"message": str(e)}), 500
 
 # User only
-def update_professional(request: Request, professional_id: int):
+def update_professional(request: Request):
     try:
         headers = request.headers
         auth_token = headers.get("authorization")
@@ -97,7 +104,9 @@ def update_professional(request: Request, professional_id: int):
         elif not body:
             return jsonify({"message": "No data provided for update"}), 400
         
-        professional = Professional.query.filter_by(id=professional_id).first()
+        mobile = user["mobile"]
+        user_data = User.query.filter_by(mobile=mobile).first()
+        professional = Professional.query.filter_by(user_id=user_data.id).first()
 
         # Checking if the service entered is valid or not
         if "service_id" in body.keys():
@@ -108,7 +117,7 @@ def update_professional(request: Request, professional_id: int):
                 return jsonify({"message": "Invalid service selected. Please select an existing service."}), 400
 
         if professional is None:
-            return jsonify({"message": f"Professional Id {professional_id} not found"}), 404   
+            return jsonify({"message": f"Professional account for {mobile} not found"}), 404
 
         for key, value in body.items():
             if hasattr(professional, key):
@@ -116,7 +125,7 @@ def update_professional(request: Request, professional_id: int):
 
         db.session.commit()
 
-        return jsonify({"message": f"Professional {professional_id} updated"}), 200
+        return jsonify({"message": f"Professional {professional.id} updated"}), 200
     except RuntimeError as e: 
         return jsonify({"message": str(e)}), 500
 
