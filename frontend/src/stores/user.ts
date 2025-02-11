@@ -21,7 +21,7 @@ export const useUserStore = defineStore("user", {
     user: null as UserInfo | null,
   }),
   getters: {
-    isLoggedIn: (state) => !!state.user,
+    isLoggedIn: (state) => Boolean(state.user),
   },
   actions: {
     setUserInfo(userInfo: UserInfo) {

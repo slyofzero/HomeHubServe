@@ -108,45 +108,41 @@
   </div>
 </template>
 
-<script lang="ts">
+<script lang="ts" setup>
 import { clientPoster } from "../../utils/api";
 import router from "../../router";
 import { IApiRes } from "../../types";
+import { ref } from "vue";
 
-export default {
-  name: "NewService",
-  props: {
-    showModal: {
-      type: Boolean,
-      required: true,
-    },
+defineProps({
+  showModal: {
+    type: Boolean,
+    required: true,
   },
-  methods: {
-    closeModal() {
-      this.$emit("close");
-    },
-    async addModal() {
-      const url = `${import.meta.env.VITE_API_URL}/service`;
-      const res = await clientPoster<IApiRes>(url, this.formData);
-      if (res.response === 200) {
-        this.closeModal();
-        this.errorMessage = "";
-        router.push("/admin");
-        this.$emit("refreshServices");
-      } else {
-        this.errorMessage = res.data.message || "Couldn't create a new service";
-      }
-    },
-  },
-  data() {
-    return {
-      formData: {
-        name: "",
-        description: "",
-        price: "",
-      },
-      errorMessage: "",
-    };
-  },
-};
+});
+
+const emit = defineEmits(["close", "refreshServices"]);
+
+const formData = ref({
+  name: "",
+  description: "",
+  price: "",
+});
+const errorMessage = ref("");
+
+async function closeModal() {
+  emit("close");
+}
+async function addModal() {
+  const url = `${import.meta.env.VITE_API_URL}/service`;
+  const res = await clientPoster<IApiRes>(url, formData.value);
+  if (res.response === 200) {
+    closeModal();
+    errorMessage.value = "";
+    router.push("/admin");
+    emit("refreshServices");
+  } else {
+    errorMessage.value = res.data.message || "Couldn't create a new service";
+  }
+}
 </script>

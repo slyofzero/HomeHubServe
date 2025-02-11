@@ -56,67 +56,61 @@
   </div>
 </template>
 
-<script lang="ts">
+<script lang="ts" setup>
 import { ref, watch } from "vue";
 import router from "../router";
 import { IApiRes, IService, ServiceApiRes } from "../types";
 import { clientPoster, useApi } from "../utils/api";
 import { useUserStore } from "../stores";
+import { JWT_KEY_NAME } from "../utils/constants";
 
-export default {
-  name: "Register",
-  data() {
-    return {
-      form: {
-        experience: "",
-        service_id: "",
-        description: "",
-      },
-      errorMessage: "",
-    };
-  },
-  methods: {
-    async registerProfessional(event: Event) {
-      event.preventDefault();
-      const url = `${import.meta.env.VITE_API_URL}/professional`;
-      console.log(this.form);
+// Check if user is logged in or allowed
+const userStore = useUserStore();
+if (!userStore.isLoggedIn && !localStorage.getItem(JWT_KEY_NAME))
+  router.push("/login");
 
-      try {
-        const res = await clientPoster<IApiRes>(url, this.form);
+watch(userStore, () => {
+  console.log(userStore.isLoggedIn, "status");
+  if (!userStore.isLoggedIn) router.push("/login");
+});
 
-        if (res.response >= 400) {
-          this.errorMessage =
-            res.data.message || "Invalid input. Please try again.";
-        } else {
-          this.errorMessage = "";
-          router.push("/professional");
-        }
-      } catch (error) {
-        this.errorMessage = "An unexpected error occurred. Please try again.";
-        console.error("Error during login:", error);
-      }
-    },
-  },
-  setup() {
-    const services = ref<IService[]>([]);
-    const servicesUrl = `${import.meta.env.VITE_API_URL}/service`;
-    const { data: serviceRes } = useApi<ServiceApiRes>(servicesUrl);
+const services = ref<IService[]>([]);
+const form = ref({
+  experience: "",
+  service_id: "",
+  description: "",
+});
+const errorMessage = ref("");
 
-    watch(serviceRes, () => {
-      const new_services = serviceRes.value?.data.data;
-      services.value = new_services ? new_services : [];
-    });
+// Set services
+const servicesUrl = `${import.meta.env.VITE_API_URL}/service`;
+const { data: serviceRes } = useApi<ServiceApiRes>(servicesUrl);
 
-    const userStore = useUserStore();
-    console.log(userStore.isLoggedIn, "status");
-    watch(userStore, () => {
-      console.log(userStore.isLoggedIn, "status");
-      if (!userStore.isLoggedIn) router.push("/login");
-    });
+watch(serviceRes, () => {
+  const new_services = serviceRes.value?.data.data;
+  services.value = new_services ? new_services : [];
+});
 
-    return { services }; // Expose services to the template
-  },
-};
+// Register professional
+async function registerProfessional() {
+  const url = `${import.meta.env.VITE_API_URL}/professional`;
+  console.log(form.value);
+
+  try {
+    const res = await clientPoster<IApiRes>(url, form.value);
+
+    if (res.response >= 400) {
+      errorMessage.value =
+        res.data.message || "Invalid input. Please try again.";
+    } else {
+      errorMessage.value = "";
+      router.push("/professional");
+    }
+  } catch (error) {
+    errorMessage.value = "An unexpected error occurred. Please try again.";
+    console.error("Error during login:", error);
+  }
+}
 </script>
 
 <style scoped>

@@ -124,80 +124,59 @@
   />
 </template>
 
-<script lang="ts">
+<script lang="ts" setup>
 import { ref, watch } from "vue";
 import { clientDelete, useApi } from "../utils/api";
 import { IService, ServiceApiRes } from "../types";
 import NewService from "../modals/service/NewService.vue";
 import EditService from "../modals/service/EditService.vue";
 
-export default {
-  name: "AdminDashboard",
-  setup() {
-    const showCreateModal = ref(false);
-    const showEditModal = ref(false);
-    const serviceToEdit = ref<number | null>(null);
+const showCreateModal = ref(false);
+const showEditModal = ref(false);
+const serviceToEdit = ref<number | null>(null);
 
-    // -------------------- Services --------------------
-    const services = ref<IService[]>([]);
-    const servicesUrl = `${import.meta.env.VITE_API_URL}/service`;
-    const { data: serviceRes, mutate: servicesMutate } =
-      useApi<ServiceApiRes>(servicesUrl);
+// -------------------- Services --------------------
+const services = ref<IService[]>([]);
+const servicesUrl = `${import.meta.env.VITE_API_URL}/service`;
+const { data: serviceRes, mutate: servicesMutate } =
+  useApi<ServiceApiRes>(servicesUrl);
 
-    const refreshServices = () => servicesMutate();
+const refreshServices = () => servicesMutate();
 
-    watch(serviceRes, () => {
-      const new_services = serviceRes.value?.data.data;
-      services.value = new_services ? new_services : [];
-    });
+watch(serviceRes, () => {
+  const new_services = serviceRes.value?.data.data;
+  services.value = new_services ? new_services : [];
+});
 
-    const handleEditClick = (serviceId: number) => {
-      showEditModal.value = true;
-      serviceToEdit.value = serviceId;
-    };
-
-    const deleteService = async (id: number) => {
-      const deleteRes = await clientDelete(`${servicesUrl}/${id}`);
-      if (deleteRes.response === 200) servicesMutate();
-    };
-
-    const professionals = ref([
-      { id: 1, name: "John Doe", experience: 5, serviceName: "Service 1" },
-      { id: 2, name: "Jane Smith", experience: 8, serviceName: "Service 2" },
-    ]);
-
-    const serviceRequests = ref([
-      {
-        id: 1,
-        assignedProfessional: "John Doe",
-        requestedDate: "2024-12-13",
-        status: "Requested",
-      },
-      {
-        id: 2,
-        assignedProfessional: "Jane Smith",
-        requestedDate: "2024-12-12",
-        status: "Accepted",
-      },
-    ]);
-
-    return {
-      services,
-      professionals,
-      serviceRequests,
-      showCreateModal,
-      refreshServices,
-      deleteService,
-      showEditModal,
-      serviceToEdit,
-      handleEditClick,
-    };
-  },
-  components: {
-    NewService,
-    EditService,
-  },
+const handleEditClick = (serviceId: number) => {
+  showEditModal.value = true;
+  serviceToEdit.value = serviceId;
 };
+
+const deleteService = async (id: number) => {
+  const deleteRes = await clientDelete(`${servicesUrl}/${id}`);
+  if (deleteRes.response === 200) servicesMutate();
+};
+
+const professionals = ref([
+  { id: 1, name: "John Doe", experience: 5, serviceName: "Service 1" },
+  { id: 2, name: "Jane Smith", experience: 8, serviceName: "Service 2" },
+]);
+
+const serviceRequests = ref([
+  {
+    id: 1,
+    assignedProfessional: "John Doe",
+    requestedDate: "2024-12-13",
+    status: "Requested",
+  },
+  {
+    id: 2,
+    assignedProfessional: "Jane Smith",
+    requestedDate: "2024-12-12",
+    status: "Accepted",
+  },
+]);
 </script>
 
 <style scoped>

@@ -106,73 +106,59 @@
   ></div>
 </template>
 
-<script lang="ts">
+<script lang="ts" setup>
+import { ref, watch } from "vue";
 import router from "../../router";
 import { IApiRes, ServiceApiRes } from "../../types";
 import { clientPut, useApi } from "../../utils/api";
 
-export default {
-  name: "EditService",
-  props: {
-    showModal: {
-      type: Boolean,
-      required: true,
-    },
-    service: {
-      type: [Number, null],
-      required: true,
-    },
+const props = defineProps({
+  showModal: {
+    type: Boolean,
+    required: true,
   },
-  methods: {
-    closeModal() {
-      this.$emit("close");
-    },
-    async addModal() {
-      const url = `${import.meta.env.VITE_API_URL}/service/${this.service}`;
-      const res = await clientPut<IApiRes>(url, this.formData);
-      if (res.response === 200) {
-        this.closeModal();
-        this.errorMessage = "";
-        router.push("/admin");
-        this.$emit("refreshServices");
-      } else {
-        this.errorMessage = res.data.message || "Couldn't create a new service";
-      }
-    },
+  service: {
+    type: [Number, null],
+    required: true,
   },
-  setup(props) {
-    const url = `${import.meta.env.VITE_API_URL}/service/${props.service}`;
-    const { data: serviceData, error } = useApi<ServiceApiRes>(url);
+});
 
-    return {
-      serviceData,
-      error,
-    };
-  },
-  watch: {
-    serviceData: {
-      immediate: true,
-      handler(newData) {
-        if (newData) {
-          const serviceData = this.serviceData?.data.data[0];
-          if (serviceData) {
-            this.formData.name = serviceData.name;
-            this.formData.description = serviceData.description;
-            this.formData.price = String(serviceData.price);
-          }
-        }
-      },
-    },
-  },
-  data() {
-    return {
-      formData: {
-        name: "",
-        description: "",
-        price: "",
-      },
-      errorMessage: "",
-    };
-  },
-};
+const emit = defineEmits(["close", "refreshServices"]);
+
+const formData = ref({
+  name: "",
+  description: "",
+  price: "",
+});
+const errorMessage = ref("");
+
+const url = `${import.meta.env.VITE_API_URL}/service/${props.service}`;
+const { data: serviceData } = useApi<ServiceApiRes>(url);
+
+function closeModal() {
+  emit("close");
+}
+async function addModal() {
+  const url = `${import.meta.env.VITE_API_URL}/service/${props.service}`;
+  const res = await clientPut<IApiRes>(url, formData.value);
+  if (res.response === 200) {
+    closeModal();
+    errorMessage.value = "";
+    router.push("/admin");
+    emit("refreshServices");
+  } else {
+    errorMessage.value = res.data.message || "Couldn't create a new service";
+  }
+}
+
+watch(serviceData, (newData) => {
+  if (newData) {
+    const serviceData = newData?.data.data[0];
+    if (serviceData) {
+      formData.value.name = serviceData.name;
+      formData.value.description = serviceData.description;
+      formData.value.price = String(serviceData.price);
+    }
+  }
+});
 </script>

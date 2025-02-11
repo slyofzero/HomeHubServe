@@ -98,6 +98,7 @@ const isProfessional = computed(() => {
 });
 
 function logout() {
+  console.log("logout");
   localStorage.removeItem(JWT_KEY_NAME);
   const userStore = useUserStore();
   userStore.clearUserInfo();
