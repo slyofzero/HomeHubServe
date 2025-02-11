@@ -38,6 +38,13 @@
               >Admin Dashboard</RouterLink
             >
           </li>
+          <li v-if="!isProfessional && !isAdmin && isLoggedIn" class="nav-item">
+            <RouterLink
+              class="nav-link special-link"
+              to="/professional/register"
+              >Register as a professional</RouterLink
+            >
+          </li>
           <li v-if="isProfessional" class="nav-item">
             <RouterLink class="nav-link special-link" to="/professional"
               >Professional Dashboard</RouterLink
@@ -62,48 +69,39 @@
   </header>
 </template>
 
-<script lang="ts">
+<script lang="ts" setup>
 import { JWT_KEY_NAME } from "../utils/constants";
 import { useApi } from "../utils/api";
 import { UserApiRes, useUserStore } from "../stores";
-import { watch } from "vue";
+import { computed, watch } from "vue";
 
-export default {
-  name: "Header",
-  computed: {
-    isLoggedIn() {
-      return useUserStore().isLoggedIn;
-    },
-    isAdmin() {
-      return useUserStore().$state.user?.role === "ADMIN";
-    },
-    isProfessional() {
-      return useUserStore().$state.user?.role === "PROFESSIONAL";
-    },
-  },
-  methods: {
-    logout() {
-      localStorage.removeItem(JWT_KEY_NAME);
-      const userStore = useUserStore();
-      userStore.clearUserInfo();
-    },
-  },
-  setup() {
-    const userStore = useUserStore();
-    const userDataUrl = `${import.meta.env.VITE_API_URL}/user/me`;
-    const { data: userDataRes } = useApi<UserApiRes>(userDataUrl);
+const userStore = useUserStore();
+const userDataUrl = `${import.meta.env.VITE_API_URL}/user/me`;
+const { data: userDataRes } = useApi<UserApiRes>(userDataUrl);
 
-    watch(userDataRes, () => {
-      const response = userDataRes.value?.response;
-      if (response === 200) {
-        const userData = userDataRes.value?.data.data;
-        if (userData) userStore.setUserInfo(userData);
-      } else {
-        userStore.clearUserInfo();
-      }
-    });
-  },
-};
+watch(userDataRes, () => {
+  const response = userDataRes.value?.response;
+  if (response === 200) {
+    const userData = userDataRes.value?.data.data;
+    if (userData) userStore.setUserInfo(userData);
+  } else {
+    userStore.clearUserInfo();
+  }
+});
+
+// Computed variables
+const isLoggedIn = computed(() => useUserStore().isLoggedIn);
+const isAdmin = computed(() => useUserStore().$state.user?.role === "ADMIN");
+const isProfessional = computed(() => {
+  const role = useUserStore().$state.user?.role;
+  return role === "PROFESSIONAL" || role == "REG_PROFESSIONAL";
+});
+
+function logout() {
+  localStorage.removeItem(JWT_KEY_NAME);
+  const userStore = useUserStore();
+  userStore.clearUserInfo();
+}
 </script>
 
 <style scoped>

@@ -35,45 +35,44 @@
   </div>
 </template>
 
-<script lang="ts">
+<script lang="ts" setup>
+import { ref } from "vue";
 import { ILoginRes } from "../types";
-import { apiPoster } from "../utils/api";
+import { apiPoster, clientFetcher } from "../utils/api";
 import { JWT_KEY_NAME } from "../utils/constants";
+import router from "../router";
+import { UserApiRes, useUserStore } from "../stores";
 
-export default {
-  name: "Login",
-  data() {
-    return {
-      form: {
-        mobile: "",
-        password: "",
-      },
-      errorMessage: "",
-    };
-  },
-  methods: {
-    async loginUser(event: Event) {
-      event.preventDefault();
-      const url = `${import.meta.env.VITE_API_URL}/auth/login`;
+const form = ref({
+  mobile: "",
+  password: "",
+});
+const errorMessage = ref("");
+const userStore = useUserStore();
 
-      try {
-        const res = await apiPoster<ILoginRes>(url, this.form);
+async function loginUser(event: Event) {
+  event.preventDefault();
+  const url = `${import.meta.env.VITE_API_URL}/auth/login`;
 
-        if (res.response >= 400) {
-          this.errorMessage =
-            res.data.message || "Invalid credentials. Please try again.";
-        } else {
-          this.errorMessage = "";
-          localStorage.setItem(JWT_KEY_NAME, res.data.token);
-          this.$router.push("/");
-        }
-      } catch (error) {
-        this.errorMessage = "An unexpected error occurred. Please try again.";
-        console.error("Error during login:", error);
-      }
-    },
-  },
-};
+  try {
+    const res = await apiPoster<ILoginRes>(url, form.value);
+
+    if (res.response >= 400) {
+      errorMessage.value =
+        res.data.message || "Invalid credentials. Please try again.";
+    } else {
+      errorMessage.value = "";
+      localStorage.setItem(JWT_KEY_NAME, res.data.token);
+      const userDataUrl = `${import.meta.env.VITE_API_URL}/user/me`;
+      const data = await clientFetcher<UserApiRes>(userDataUrl);
+      userStore.setUserInfo(data.data.data);
+      router.push("/");
+    }
+  } catch (error) {
+    errorMessage.value = "An unexpected error occurred. Please try again.";
+    console.error("Error during login:", error);
+  }
+}
 </script>
 
 <style scoped>

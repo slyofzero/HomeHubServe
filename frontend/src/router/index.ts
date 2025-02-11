@@ -4,6 +4,7 @@ import Home from "../components/Home.vue";
 import Register from "../components/Register.vue";
 import Login from "../components/Login.vue";
 import AdminDashboard from "../components/AdminDashboard.vue";
+import ProfessionalRegister from "../components/ProfessionalRegister.vue";
 
 // Define routes
 const routes = [
@@ -26,6 +27,13 @@ const routes = [
     path: "/admin",
     name: "AdminDashboard",
     component: AdminDashboard,
+    meta: { requiresAuth: true },
+  },
+  {
+    path: "/professional/register",
+    name: "ProfessionalRegister",
+    component: ProfessionalRegister,
+    meta: { requiresAuth: true },
   },
 ];
 

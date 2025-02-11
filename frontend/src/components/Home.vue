@@ -57,25 +57,19 @@
   </main>
 </template>
 
-<script lang="ts">
+<script lang="ts" setup>
 import { ref, watch } from "vue";
 import { useApi } from "../utils/api";
 import { IService, ServiceApiRes } from "../types";
 
-export default {
-  setup() {
-    const services = ref<IService[]>([]);
-    const servicesUrl = `${import.meta.env.VITE_API_URL}/service`;
-    const { data: serviceRes } = useApi<ServiceApiRes>(servicesUrl);
+const services = ref<IService[]>([]);
+const servicesUrl = `${import.meta.env.VITE_API_URL}/service`;
+const { data: serviceRes } = useApi<ServiceApiRes>(servicesUrl);
 
-    watch(serviceRes, () => {
-      const new_services = serviceRes.value?.data.data;
-      services.value = new_services ? new_services : [];
-    });
-
-    return { services }; // Expose services to the template
-  },
-};
+watch(serviceRes, () => {
+  const new_services = serviceRes.value?.data.data;
+  services.value = new_services ? new_services : [];
+});
 </script>
 
 <style scoped>

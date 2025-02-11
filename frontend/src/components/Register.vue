@@ -64,47 +64,39 @@
   </div>
 </template>
 
-<script lang="ts">
+<script lang="ts" setup>
+import { ref } from "vue";
 import router from "../router";
 import { IApiRes } from "../types";
 import { apiPoster } from "../utils/api";
 
-export default {
-  name: "Register",
-  data() {
-    return {
-      form: {
-        name: "",
-        mobile: "",
-        password: "",
-        address: "",
-        pincode: "",
-      },
-      errorMessage: "",
-    };
-  },
-  methods: {
-    async registerUser(event: Event) {
-      event.preventDefault();
-      const url = `${import.meta.env.VITE_API_URL}/auth/register`;
+const form = ref({
+  name: "",
+  mobile: "",
+  password: "",
+  address: "",
+  pincode: "",
+});
+const errorMessage = ref("");
 
-      try {
-        const res = await apiPoster<IApiRes>(url, this.form);
+async function registerUser() {
+  const url = `${import.meta.env.VITE_API_URL}/auth/register`;
 
-        if (res.response >= 400) {
-          this.errorMessage =
-            res.data.message || "Invalid credentials. Please try again.";
-        } else {
-          this.errorMessage = "";
-          router.push("/login");
-        }
-      } catch (error) {
-        this.errorMessage = "An unexpected error occurred. Please try again.";
-        console.error("Error during login:", error);
-      }
-    },
-  },
-};
+  try {
+    const res = await apiPoster<IApiRes>(url, form.value);
+
+    if (res.response >= 400) {
+      errorMessage.value =
+        res.data.message || "Invalid credentials. Please try again.";
+    } else {
+      errorMessage.value = "";
+      router.push("/login");
+    }
+  } catch (error) {
+    errorMessage.value = "An unexpected error occurred. Please try again.";
+    console.error("Error during login:", error);
+  }
+}
 </script>
 
 <style scoped>
