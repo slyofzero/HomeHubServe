@@ -16,7 +16,7 @@ def create_professional(request: Request):
             return jsonify({"message": user["message"]}), 401
         
         user = User.query.filter_by(mobile = user["mobile"]).first()
-        if user["status"] == "BLOCKED":
+        if user.status == "BLOCKED":
             return jsonify({"message": "Your user account is blocked currently. You can't register as a professional."}), 401
 
         professional = Professional.query.filter_by(user_id=user.id).first()
@@ -40,6 +40,32 @@ def create_professional(request: Request):
         db.session.commit()
 
         return jsonify({"message": f"Your request to register as a professional has been sent."}), 200
+    except Exception as e: 
+        return jsonify({"message": str(e)}), 500
+
+# Admin only
+def get_professional_applications(request: Request):
+    try:
+        headers = request.headers
+        auth_token = headers.get("authorization")
+        user, is_token_valid = decode_token(auth_token)
+
+        if not is_token_valid:
+            return jsonify({"message": user["message"]}), 401
+        elif user["role"] != "ADMIN":
+            return jsonify({"message": "User not allowed"}), 401
+
+        professionals = Professional.query.filter_by(status="PENDING").all()
+
+        professional_json = []
+        for professional in professionals:
+            service = Service.query.filter_by(id=professional.service_id).first()
+            professional_dict = to_dict(professional)
+            professional_dict["service_name"] = service.name
+            del professional_dict["service_id"]
+            professional_json.append(professional_dict)
+
+        return jsonify({"message": "Professional applications list.", "data": professional_json}), 200
     except Exception as e: 
         return jsonify({"message": str(e)}), 500
 

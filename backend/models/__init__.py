@@ -1,5 +1,6 @@
 from flask_sqlalchemy import SQLAlchemy
 from datetime import date
+import time
 
 db = SQLAlchemy()
 
@@ -8,7 +9,7 @@ class User(db.Model):
     __tablename__ = 'user'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.String, nullable=False)
-    joined_on = db.Column(db.Date, default=date.today())
+    joined_on = db.Column(db.Integer, default=lambda: int(time.time()))
     role = db.Column(db.String, db.CheckConstraint("role IN ('CUSTOMER', 'REG_PROFESSIONAL', 'PROFESSIONAL', 'ADMIN')"), default='CUSTOMER')
     mobile = db.Column(db.String, nullable=False, unique=True)
     password = db.Column(db.String, nullable=False)
@@ -35,6 +36,7 @@ class Professional(db.Model):
     status = db.Column(db.String, db.CheckConstraint("status IN ('REJECTED', 'PENDING', 'ACCEPTED', 'BLOCKED')"), default='PENDING')
     rating = db.Column(db.Integer, default=0)
     service = db.relationship('Service', back_populates='professionals')
+    created_on = db.Column(db.Integer, default=lambda: int(time.time()))
 
 Service.professionals = db.relationship('Professional', order_by=Professional.id, back_populates='service')
 

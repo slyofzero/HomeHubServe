@@ -32,7 +32,7 @@ def change_user_status(request: Request, user_id: int):
     except Exception as e: 
         return jsonify({"message": str(e)}), 500
 
-allowed_professional_status = ('REJECTED', 'PENDING', 'ACCEPTED', 'BLOCKED')
+allowed_professional_status = ('REJECTED', 'ACCEPTED', 'BLOCKED')
 
 def change_professional_status(request: Request, professional_id: int):
     try:

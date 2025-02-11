@@ -1,12 +1,17 @@
 from flask import Blueprint, request
-from controllers.professional import create_professional, get_single_professional, delete_professional, update_professional, get_professionals_for_service
+from controllers.professional import create_professional, get_single_professional, delete_professional, update_professional, get_professionals_for_service,         get_professional_applications
 from routes.service import service_bp
 
 professional_bp = Blueprint(
     "professional_bp", __name__, static_folder="static", template_folder="templates"
 )
 
-# For the login form
+# To get new professional applications
+@professional_bp.route("/applications", methods=["GET"])
+def get_professional_applications_route():
+    return get_professional_applications(request)
+
+# To manage a professional account
 @professional_bp.route("", methods=["POST", "DELETE", "PUT"])
 def create_professional_route():
     if request.method == "POST":

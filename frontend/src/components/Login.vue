@@ -65,8 +65,11 @@ async function loginUser(event: Event) {
       localStorage.setItem(JWT_KEY_NAME, res.data.token);
       const userDataUrl = `${import.meta.env.VITE_API_URL}/user/me`;
       const data = await clientFetcher<UserApiRes>(userDataUrl);
-      userStore.setUserInfo(data.data.data);
-      router.push("/");
+      const userData = data.data.data;
+      userStore.setUserInfo(userData);
+
+      if (userData.role === "ADMIN") router.push("/admin");
+      else router.push("/");
     }
   } catch (error) {
     errorMessage.value = "An unexpected error occurred. Please try again.";

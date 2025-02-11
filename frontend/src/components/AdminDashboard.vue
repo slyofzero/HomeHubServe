@@ -16,7 +16,7 @@
           </button>
         </div>
         <div class="table-responsive mt-3">
-          <table class="table table-bordered">
+          <table class="table table-bordered text-nowrap">
             <thead>
               <tr>
                 <th>ID</th>
@@ -30,7 +30,7 @@
                 <td>{{ service.id }}</td>
                 <td>{{ service.name }}</td>
                 <td>{{ service.price }}</td>
-                <td>
+                <td class="d-flex">
                   <button
                     @click="handleEditClick(service.id)"
                     class="btn btn-primary btn-sm me-2"
@@ -52,9 +52,9 @@
 
       <!-- Professionals Table -->
       <div class="mb-4">
-        <h4>Professionals</h4>
+        <h4>Professional Applications</h4>
         <div class="table-responsive mt-3">
-          <table class="table table-bordered">
+          <table class="table table-bordered text-nowrap">
             <thead>
               <tr>
                 <th>ID</th>
@@ -64,42 +64,35 @@
                 <th>Action</th>
               </tr>
             </thead>
-            <tbody>
-              <tr v-for="professional in professionals" :key="professional.id">
+            <tbody v-if="professionalApplications.length > 0">
+              <tr
+                v-for="professional in professionalApplications"
+                :key="professional.id"
+                class="text-capitalize"
+              >
                 <td>{{ professional.id }}</td>
                 <td>{{ professional.name }}</td>
                 <td>{{ professional.experience }}</td>
-                <td>{{ professional.serviceName }}</td>
+                <td>{{ professional.service_name }}</td>
                 <td>
-                  <button class="btn btn-success btn-sm me-2">Approve</button>
-                  <button class="btn btn-warning btn-sm me-2">Reject</button>
-                  <button class="btn btn-danger btn-sm">Delete</button>
+                  <button
+                    @click="applicationAction(professional.id, 'ACCEPTED')"
+                    class="btn btn-success btn-sm me-2"
+                  >
+                    Accept
+                  </button>
+                  <button
+                    @click="applicationAction(professional.id, 'REJECTED')"
+                    class="btn btn-warning btn-sm me-2"
+                  >
+                    Reject
+                  </button>
                 </td>
               </tr>
             </tbody>
-          </table>
-        </div>
-      </div>
-
-      <!-- Service Requests Table -->
-      <div>
-        <h4>Service Requests</h4>
-        <div class="table-responsive mt-3">
-          <table class="table table-bordered">
-            <thead>
+            <tbody v-else>
               <tr>
-                <th>ID</th>
-                <th>Assigned Professional</th>
-                <th>Requested Date</th>
-                <th>Status (R/P/C)</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr v-for="request in serviceRequests" :key="request.id">
-                <td>{{ request.id }}</td>
-                <td>{{ request.assignedProfessional }}</td>
-                <td>{{ request.requestedDate }}</td>
-                <td>{{ request.status }}</td>
+                <td colspan="5">No pending professional applications.</td>
               </tr>
             </tbody>
           </table>
@@ -126,10 +119,28 @@
 
 <script lang="ts" setup>
 import { ref, watch } from "vue";
-import { clientDelete, useApi } from "../utils/api";
-import { IService, ServiceApiRes } from "../types";
+import { clientDelete, clientPoster, useApi } from "../utils/api";
+import {
+  IProfessional,
+  IService,
+  ProfessionalApiRes,
+  ServiceApiRes,
+} from "../types";
 import NewService from "../modals/service/NewService.vue";
 import EditService from "../modals/service/EditService.vue";
+import { useUserStore } from "../stores";
+import { JWT_KEY_NAME } from "../utils/constants";
+import router from "../router";
+
+// Check if user is admin
+const userStore = useUserStore();
+if (!userStore.isLoggedIn && !localStorage.getItem(JWT_KEY_NAME))
+  router.push("/login");
+
+watch(userStore, () => {
+  if (!userStore.isLoggedIn) router.push("/login");
+  else if (userStore.$state.user?.role !== "ADMIN") router.push("/");
+});
 
 const showCreateModal = ref(false);
 const showEditModal = ref(false);
@@ -158,25 +169,24 @@ const deleteService = async (id: number) => {
   if (deleteRes.response === 200) servicesMutate();
 };
 
-const professionals = ref([
-  { id: 1, name: "John Doe", experience: 5, serviceName: "Service 1" },
-  { id: 2, name: "Jane Smith", experience: 8, serviceName: "Service 2" },
-]);
+// -------------------- Professional Applications --------------------
+const professionalApplications = ref<IProfessional[]>([]);
+const professoinalsUrl = `${import.meta.env.VITE_API_URL}/professional/applications`; // prettier-ignore
+const { data: professionalsRes, mutate: professionalsMutate } =
+  useApi<ProfessionalApiRes>(professoinalsUrl);
 
-const serviceRequests = ref([
-  {
-    id: 1,
-    assignedProfessional: "John Doe",
-    requestedDate: "2024-12-13",
-    status: "Requested",
-  },
-  {
-    id: 2,
-    assignedProfessional: "Jane Smith",
-    requestedDate: "2024-12-12",
-    status: "Accepted",
-  },
-]);
+watch(professionalsRes, () => {
+  professionalApplications.value = professionalsRes.value?.data.data || [];
+});
+
+const applicationAction = async (
+  professionalId: number,
+  status: IProfessional["status"]
+) => {
+  const url = `${import.meta.env.VITE_API_URL}/admin/professional/${professionalId}`; // prettier-ignore
+  const updateRes = await clientPoster(url, { status });
+  if (updateRes.response === 200) professionalsMutate();
+};
 </script>
 
 <style scoped>

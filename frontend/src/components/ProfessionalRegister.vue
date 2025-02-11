@@ -70,7 +70,6 @@ if (!userStore.isLoggedIn && !localStorage.getItem(JWT_KEY_NAME))
   router.push("/login");
 
 watch(userStore, () => {
-  console.log(userStore.isLoggedIn, "status");
   if (!userStore.isLoggedIn) router.push("/login");
 });
 
