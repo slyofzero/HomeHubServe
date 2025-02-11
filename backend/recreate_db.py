@@ -1,5 +1,5 @@
 from app import db, app
-from models import Professional
+from models import Professional, User
 from sqlalchemy import text
 
 with app.app_context():

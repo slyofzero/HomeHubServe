@@ -24,7 +24,7 @@ def create_professional(request: Request):
         service = Service.query.filter_by(id=service_id).first()
 
         if service is None:
-            return jsonify({"message": "Please enter an existing service."}), 200
+            return jsonify({"message": "Please enter an existing service."}), 400
         
         new_professional = Professional(
             name=user.name,
@@ -34,6 +34,7 @@ def create_professional(request: Request):
             pincode=user.pincode,
             user_id=user.id
         )
+        setattr(user, "role", "REG_PROFESSIONAL")
 
         db.session.add(new_professional)
         db.session.commit()
@@ -82,8 +83,9 @@ def delete_professional(request: Request):
         user_data = User.query.filter_by(mobile=mobile).first()
         professional = Professional.query.filter_by(user_id=user_data.id).first()
         if professional is None:
-            return jsonify({"message": f"Professional account for {mobile} not found"}), 404    
+            return jsonify({"message": f"Professional account for {mobile} not found"}), 404  
 
+        setattr(user_data, "role", "CUSTOMER")
         db.session.delete(professional)
         db.session.commit()
 

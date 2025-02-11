@@ -9,7 +9,7 @@ class User(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.String, nullable=False)
     joined_on = db.Column(db.Date, default=date.today())
-    role = db.Column(db.String, db.CheckConstraint("role IN ('CUSTOMER', 'PROFESSIONAL', 'ADMIN')"), default='CUSTOMER')
+    role = db.Column(db.String, db.CheckConstraint("role IN ('CUSTOMER', 'REG_PROFESSIONAL', 'PROFESSIONAL', 'ADMIN')"), default='CUSTOMER')
     mobile = db.Column(db.String, nullable=False, unique=True)
     password = db.Column(db.String, nullable=False)
     address = db.Column(db.String, nullable=False)

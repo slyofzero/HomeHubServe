@@ -16,6 +16,7 @@ def get_me(request: Request):
             return jsonify({"message": user_token["message"]}), 401
 
         user = User.query.filter_by(mobile=user_token["mobile"]).first()
+        professional = Professional.query.filter_by(user_id=user.id).first()
         user_dict = {key: value for key, value in user.__dict__.items() if not key.startswith('_') and key not in ['status', 'password']}
         user_dict["joined_on"] = int(datetime.combine(user_dict["joined_on"], datetime.min.time()).timestamp())
 
