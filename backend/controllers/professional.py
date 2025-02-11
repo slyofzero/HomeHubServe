@@ -16,13 +16,14 @@ def create_professional(request: Request):
             return jsonify({"message": user["message"]}), 401
         
         user = User.query.filter_by(mobile = user["mobile"]).first()
-        professional = Professional.query.filter_by(user_id=user.id).first()
+        if user["status"] == "BLOCKED":
+            return jsonify({"message": "Your user account is blocked currently. You can't register as a professional."}), 401
 
+        professional = Professional.query.filter_by(user_id=user.id).first()
         if professional is not None:
             return jsonify({"message": "You have already registerd as a professional."}), 400
 
         service = Service.query.filter_by(id=service_id).first()
-
         if service is None:
             return jsonify({"message": "Please enter an existing service."}), 400
         
@@ -35,7 +36,6 @@ def create_professional(request: Request):
             user_id=user.id
         )
         setattr(user, "role", "REG_PROFESSIONAL")
-
         db.session.add(new_professional)
         db.session.commit()
 
