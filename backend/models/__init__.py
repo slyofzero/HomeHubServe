@@ -11,7 +11,7 @@ class User(db.Model):
     name = db.Column(db.String, nullable=False)
     joined_on = db.Column(db.Integer, default=lambda: int(time.time()))
     role = db.Column(db.String, db.CheckConstraint("role IN ('CUSTOMER', 'REG_PROFESSIONAL', 'PROFESSIONAL', 'ADMIN')"), default='CUSTOMER')
-    mobile = db.Column(db.String, nullable=False, unique=True)
+    email = db.Column(db.String, nullable=False, unique=True)
     password = db.Column(db.String, nullable=False)
     address = db.Column(db.String, nullable=False)
     pincode = db.Column(db.Integer, nullable=False)

@@ -5,7 +5,7 @@ user_bp = Blueprint(
     "user_bp", __name__, static_folder="static", template_folder="templates"
 )
 
-# For the login form
+# To get own user account
 @user_bp.route("/me", methods=["GET"])
 def login():
     return get_me(request)

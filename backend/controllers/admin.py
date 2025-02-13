@@ -40,18 +40,22 @@ def change_professional_status(request: Request, professional_id: int):
         headers = request.headers
         new_status = body.get("status")
         auth_token = headers.get("authorization")
-        user, is_token_valid = decode_token(auth_token)
+        user_token, is_token_valid = decode_token(auth_token)
 
         if not is_token_valid:
-            return jsonify({"message": user["message"]}), 401
-        elif user["role"] != "ADMIN":
+            return jsonify({"message": user_token["message"]}), 401
+        elif user_token["role"] != "ADMIN":
             return jsonify({"message": "User not allowed"}), 401
+        
         
         if new_status not in allowed_professional_status:
             return jsonify({"message": f"Invalid status. Status should be {', '.join(allowed_professional_status)}"}), 400
         
         professional = Professional.query.filter_by(id=professional_id).first()
+        user = User.query.filter_by(id=professional.user_id).first()
         setattr(professional, "status", new_status)
+        if new_status == "ACCEPTED":
+            setattr(user, "role", "PROFESSIONAL")
         db.session.commit()
 
         return jsonify({"message": f"User {professional_id}'s status updated"}), 200

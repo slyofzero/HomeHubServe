@@ -25,12 +25,12 @@
                 <th>Action</th>
               </tr>
             </thead>
-            <tbody>
+            <tbody v-if="services.length">
               <tr v-for="service in services" :key="service.id">
                 <td>{{ service.id }}</td>
                 <td>{{ service.name }}</td>
                 <td>{{ service.price }}</td>
-                <td class="d-flex">
+                <td class="d-flex justify-content-center">
                   <button
                     @click="handleEditClick(service.id)"
                     class="btn btn-primary btn-sm me-2"
@@ -44,6 +44,11 @@
                     Delete
                   </button>
                 </td>
+              </tr>
+            </tbody>
+            <tbody v-else>
+              <tr>
+                <td colspan="5">No services created yet.</td>
               </tr>
             </tbody>
           </table>

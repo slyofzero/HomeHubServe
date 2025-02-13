@@ -11,6 +11,10 @@ export interface IProfessional {
   user_id: number;
 }
 
+export interface IProfessionalMe extends IProfessional {
+  service_name: string;
+}
+
 export interface ProfessionalApiRes {
   message: string;
   data: IProfessional[];

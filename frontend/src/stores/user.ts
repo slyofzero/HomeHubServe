@@ -5,7 +5,7 @@ export interface UserInfo {
   address: string;
   id: number;
   joined_on: number;
-  mobile: string;
+  email: string;
   name: string;
   pincode: number;
   role: "ADMIN" | "REG_PROFESSIONAL" | "PROFESSIONAL" | "CUSTOMER";

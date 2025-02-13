@@ -20,11 +20,11 @@
         />
       </div>
       <div>
-        <label for="mobile" class="form-label">Mobile</label>
+        <label for="email" class="form-label">Email</label>
         <input
           type="tel"
-          id="mobile"
-          v-model="form.mobile"
+          id="email"
+          v-model="form.email"
           class="form-control"
           required
         />
@@ -72,7 +72,7 @@ import { apiPoster } from "../utils/api";
 
 const form = ref({
   name: "",
-  mobile: "",
+  email: "",
   password: "",
   address: "",
   pincode: "",

@@ -1,23 +1,28 @@
 from flask import Request, jsonify
 from werkzeug.security import generate_password_hash, check_password_hash
 from utils.auth import create_token
+from utils.general import is_valid_email
 from models import db, User
+
+register_required_fields = ["name", "email", "password", "address", "pincode"]
 
 def register_controller(request: Request):
     try:
         body = request.get_json()
-        name, mobile, password, address, pincode = (body.get(key) for key in ["name", "mobile", "password", "address", "pincode"])
+        name, email, password, address, pincode = (body.get(key) for key in register_required_fields)
         
-        if not all([name, mobile, password, address, pincode]):
-            return jsonify({"message": "Missing required fields"}), 400
+        if not all([name, email, password, address, pincode]):
+            return jsonify({"message": f"Missing required fields, make sure all fields are entered - {', '.join(register_required_fields)}"}), 400
+        elif not is_valid_email(email):
+            return jsonify({"message": "Please enter a valid email ID."}), 400
         
-        user = User.query.filter_by(mobile=mobile).first()
+        user = User.query.filter_by(email=email).first()
         if user is not None:
-            return jsonify({"message": "Mobile number is already registered"}), 409
+            return jsonify({"message": "Email ID is already registered"}), 409
         
         new_user = User(
             name=name,
-            mobile=mobile,
+            email=email,
             password=generate_password_hash(password),
             address=address,
             pincode=int(pincode)    
@@ -33,13 +38,15 @@ def register_controller(request: Request):
 def login_controller(request: Request):
     try:
         body = request.get_json()
-        mobile, password = (body.get(key) for key in ["mobile", "password"])
+        email, password = (body.get(key) for key in ["email", "password"])
 
         # Check for all fields
-        if not mobile or not password:
-            return jsonify({"message": "All fields 'mobile' and 'password' are required"}), 400
+        if not email or not password:
+            return jsonify({"message": "All fields 'email' and 'password' are required"}), 400
+        elif not is_valid_email(email):
+            return jsonify({"message": "Please enter a valid email ID."}), 400
         
-        user = User.query.filter_by(mobile=mobile).first()
+        user = User.query.filter_by(email=email).first()
 
         # Check if username is unique
         if user is None:

@@ -5,7 +5,7 @@ from models import User
 
 def create_token(user: User):
     payload = {
-        "mobile": user.mobile,
+        "email": user.email,
         "role": user.role,
         "iat": datetime.datetime.now().timestamp(),
         "exp": (datetime.datetime.now() + datetime.timedelta(days=30)).timestamp()

@@ -4,7 +4,7 @@
       class="navbar navbar-expand-lg navbar-light container px-4 d-flex items-center"
     >
       <!-- Brand -->
-      <h5>Welcome Customer</h5>
+      <h5 class="text-capitalize">Welcome {{ name }}</h5>
 
       <!-- Toggler -->
       <button
@@ -92,6 +92,7 @@ watch(userDataRes, () => {
 // Computed variables
 const isLoggedIn = computed(() => useUserStore().isLoggedIn);
 const isAdmin = computed(() => useUserStore().$state.user?.role === "ADMIN");
+const name = computed(() => useUserStore().$state.user?.name || "Customer");
 const isProfessional = computed(() => {
   const role = useUserStore().$state.user?.role;
   return role === "PROFESSIONAL" || role == "REG_PROFESSIONAL";

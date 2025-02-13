@@ -20,9 +20,14 @@
               aria-label="Close"
             ></button>
           </div>
+          <span
+            v-if="errorMessage"
+            class="text-danger bg-danger-subtle rounded px-4 py-1"
+            >{{ errorMessage }}</span
+          >
 
           <!-- Modal Body -->
-          <div class="modal-body">
+          <div>
             <form @submit.prevent="(e: Event) => e.preventDefault()">
               <!-- Service Name -->
               <div class="mb-3">

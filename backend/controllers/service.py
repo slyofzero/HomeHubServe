@@ -1,5 +1,5 @@
 from flask import Request, jsonify
-from models import db, Service
+from models import db, Service, Professional
 from utils.auth import decode_token
 
 def to_dict(object):
@@ -67,6 +67,10 @@ def delete_service(request: Request, service_id: int):
             return jsonify({"message": "User not allowed"}), 401
         
         service = Service.query.filter_by(id=service_id).first()
+        professionals = Professional.query.filter_by(service_id=service_id).first()
+        
+        for professional in professionals:
+            db.session.delete(professional)
 
         if service is None:
             return jsonify({"message": f"Service Id {service_id} not found"}), 404   

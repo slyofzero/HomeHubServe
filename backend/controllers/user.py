@@ -1,6 +1,7 @@
 from flask import Request, jsonify
 from utils.auth import decode_token
 from models import User, Professional, db
+from controllers.service import to_dict
 
 common_fields_with_professional = ["name", "pincode"]
 
@@ -14,7 +15,7 @@ def get_me(request: Request):
         if not is_token_valid:
             return jsonify({"message": user_token["message"]}), 401
 
-        user = User.query.filter_by(mobile=user_token["mobile"]).first()
+        user = User.query.filter_by(email=user_token["email"]).first()
         user_dict = {key: value for key, value in user.__dict__.items() if not key.startswith('_') and key not in ['status', 'password']}
 
         return jsonify({"message": "User registered successfully", "data": user_dict}), 200
@@ -31,7 +32,7 @@ def user_is_professional(request: Request):
         if not is_token_valid:
             return jsonify({"message": user_token["message"]}), 401
 
-        user = User.query.filter_by(mobile=user_token["mobile"]).first()
+        user = User.query.filter_by(email=user_token["email"]).first()
         professional = Professional.query.filter_by(user_id=user.id).first()
 
         if professional is None:
@@ -53,12 +54,12 @@ def update_user(request: Request):
         elif not body:
             return jsonify({"message": "No data provided for update"}), 400
         
-        mobile = user["mobile"]
-        user_data = User.query.filter_by(mobile=mobile).first()
+        email = user["email"]
+        user_data = User.query.filter_by(email=email).first()
         professional = Professional.query.filter_by(user_id=user_data.id).first()
 
         if user_data is None:
-            return jsonify({"message": f"User {mobile} not found"}), 404   
+            return jsonify({"message": f"User {email} not found"}), 404   
 
         for key, value in body.items():
             if hasattr(user_data, key):
@@ -82,15 +83,16 @@ def delete_user(request: Request):
         if not is_token_valid:
             return jsonify({"message": user["message"]}), 401
         
-        mobile = user["mobile"]
-        user_data = User.query.filter_by(mobile=mobile).first()
+        email = user["email"]
+        user_data = User.query.filter_by(email=email).first()
         professional = Professional.query.filter_by(user_id=user_data.id).first()
 
         if user_data is None:
-            return jsonify({"message": f"User {mobile} not found"}), 404   
+            return jsonify({"message": f"User {email} not found"}), 404   
 
         db.session.delete(user_data)
-        db.session.delete(professional)
+        if professional is not None:
+            db.session.delete(professional)
         db.session.commit()
 
         return jsonify({"message": f"User {user_data.id} deleted"}), 200

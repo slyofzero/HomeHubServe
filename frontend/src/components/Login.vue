@@ -11,11 +11,11 @@
     </span>
     <form class="d-flex flex-column gap-4" @submit.prevent="loginUser">
       <div>
-        <label for="mobile" class="form-label">Mobile</label>
+        <label for="email" class="form-label">Email</label>
         <input
           type="tel"
-          id="mobile"
-          v-model="form.mobile"
+          id="email"
+          v-model="form.email"
           class="form-control"
           required
         />
@@ -44,7 +44,7 @@ import router from "../router";
 import { UserApiRes, useUserStore } from "../stores";
 
 const form = ref({
-  mobile: "",
+  email: "",
   password: "",
 });
 const errorMessage = ref("");
