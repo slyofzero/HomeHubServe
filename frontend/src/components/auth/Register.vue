@@ -66,9 +66,9 @@
 
 <script lang="ts" setup>
 import { ref } from "vue";
-import router from "../router";
-import { IApiRes } from "../types";
-import { apiPoster } from "../utils/api";
+import router from "@/router";
+import { IApiRes } from "@/types";
+import { apiPoster } from "@/utils/api";
 
 const form = ref({
   name: "",

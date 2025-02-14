@@ -162,13 +162,12 @@
 
 <script lang="ts" setup>
 import { computed, ref, watch } from "vue";
-import router from "../router";
-import { useUserStore } from "../stores";
-import { JWT_KEY_NAME } from "../utils/constants";
-import { useApi } from "../utils/api";
-import { IProfessionalMe, ProfessionalApiRes } from "../types";
-import EditProfessional from "../modals/professional/EditProfessional.vue";
-import DeleteProfessional from "../modals/professional/DeleteProfessional.vue";
+import router from "@/router";
+import { useUserStore } from "@/stores";
+import { JWT_KEY_NAME } from "@/utils/constants";
+import { useApi } from "@/utils/api";
+import { IProfessionalMe, ProfessionalApiRes } from "@/types";
+import { DeleteProfessional, EditProfessional } from "@/modals/professional";
 
 // Check if user is admin
 const userStore = useUserStore();

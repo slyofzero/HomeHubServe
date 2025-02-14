@@ -108,9 +108,9 @@
 
 <script lang="ts" setup>
 import { ref, watch } from "vue";
-import router from "../../router";
-import { IApiRes, ServiceApiRes } from "../../types";
-import { clientPut, useApi } from "../../utils/api";
+import router from "@/router";
+import { IApiRes, ServiceApiRes } from "@/types";
+import { clientPut, useApi } from "@/utils/api";
 
 const props = defineProps({
   showModal: {

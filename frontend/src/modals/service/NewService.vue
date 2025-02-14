@@ -114,9 +114,9 @@
 </template>
 
 <script lang="ts" setup>
-import { clientPoster } from "../../utils/api";
-import router from "../../router";
-import { IApiRes } from "../../types";
+import { clientPoster } from "@/utils/api";
+import router from "@/router";
+import { IApiRes } from "@/types";
 import { ref } from "vue";
 
 defineProps({

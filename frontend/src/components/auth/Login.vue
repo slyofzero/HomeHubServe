@@ -37,12 +37,12 @@
 
 <script lang="ts" setup>
 import { ref } from "vue";
-import { ILoginRes } from "../types";
-import { apiPoster, clientFetcher } from "../utils/api";
-import { JWT_KEY_NAME } from "../utils/constants";
-import router from "../router";
-import { useUserStore } from "../stores";
-import { SingleUserApiRes } from "../types/user";
+import { ILoginRes } from "@/types";
+import { apiPoster, clientFetcher } from "@/utils/api";
+import { JWT_KEY_NAME } from "@/utils/constants";
+import router from "@/router";
+import { useUserStore } from "@/stores";
+import { SingleUserApiRes } from "@/types/user";
 
 const form = ref({
   email: "",

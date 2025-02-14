@@ -59,8 +59,8 @@
 
 <script lang="ts" setup>
 import { ref, watch } from "vue";
-import { useApi } from "../utils/api";
-import { IService, ServiceApiRes } from "../types";
+import { useApi } from "@/utils/api";
+import { IService, ServiceApiRes } from "@/types";
 
 const services = ref<IService[]>([]);
 const servicesUrl = `${import.meta.env.VITE_API_URL}/service`;

@@ -58,11 +58,11 @@
 
 <script lang="ts" setup>
 import { ref, watch } from "vue";
-import router from "../router";
-import { IApiRes, IService, ServiceApiRes } from "../types";
-import { clientPoster, useApi } from "../utils/api";
-import { useUserStore } from "../stores";
-import { JWT_KEY_NAME } from "../utils/constants";
+import router from "@/router";
+import { IApiRes, IService, ServiceApiRes } from "@/types";
+import { clientPoster, useApi } from "@/utils/api";
+import { useUserStore } from "@/stores";
+import { JWT_KEY_NAME } from "@/utils/constants";
 
 // Check if user is logged in or allowed
 const userStore = useUserStore();

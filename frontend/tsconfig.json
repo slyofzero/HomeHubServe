@@ -1,12 +1,15 @@
 {
-  "files": [],
   "compilerOptions": {
+    "baseUrl": ".", // Ensure baseUrl is set to the root directory
     "paths": {
-      "@/*": ["./src/*"]
-    }
+      "@/*": ["src/*"] // Maps @/ to the src/ folder
+    },
+    "module": "ESNext",
+    "moduleResolution": "node"
   },
-  "references": [
-    { "path": "./tsconfig.app.json" },
-    { "path": "./tsconfig.node.json" }
-  ]
+  "include": ["src"]
+  // "references": [
+  //   { "path": "./tsconfig.app.json" },
+  //   { "path": "./tsconfig.node.json" }
+  // ]
 }

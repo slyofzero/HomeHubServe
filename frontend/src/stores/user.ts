@@ -1,6 +1,6 @@
 // userStore.js (Pinia)
 import { defineStore } from "pinia";
-import { IUser } from "../types/user";
+import { IUser } from "@/types/user";
 
 export const useUserStore = defineStore("user", {
   state: () => ({

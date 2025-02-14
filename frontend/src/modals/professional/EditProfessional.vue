@@ -79,9 +79,9 @@
 </template>
 
 <script lang="ts" setup>
-import { clientPut } from "../../utils/api";
-import router from "../../router";
-import { IApiRes } from "../../types";
+import { clientPut } from "@/utils/api";
+import router from "@/router";
+import { IApiRes } from "@/types";
 import { ref } from "vue";
 
 defineProps({

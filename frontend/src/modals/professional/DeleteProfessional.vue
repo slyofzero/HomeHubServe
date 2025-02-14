@@ -68,11 +68,11 @@
 </template>
 
 <script lang="ts" setup>
-import { clientDelete } from "../../utils/api";
-import router from "../../router";
-import { IApiRes } from "../../types";
+import { clientDelete } from "@/utils/api";
+import router from "@/router";
+import { IApiRes } from "@/types";
 import { ref } from "vue";
-import { useUserStore } from "../../stores";
+import { useUserStore } from "@/stores";
 
 defineProps({
   showModal: {

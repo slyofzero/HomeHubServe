@@ -96,11 +96,11 @@
 </template>
 
 <script lang="ts" setup>
-import { clientPoster } from "../../utils/api";
-import router from "../../router";
-import { IApiRes, IProfessional } from "../../types";
+import { clientPoster } from "@/utils/api";
+import router from "@/router";
+import { IApiRes, IProfessional } from "@/types";
 import { ref } from "vue";
-import { formatUnixTimestamp } from "../../utils/time";
+import { formatUnixTimestamp } from "@/utils/time";
 
 const props = defineProps<{
   showModal: boolean;

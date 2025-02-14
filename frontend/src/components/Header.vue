@@ -70,11 +70,11 @@
 </template>
 
 <script lang="ts" setup>
-import { JWT_KEY_NAME } from "../utils/constants";
-import { useApi } from "../utils/api";
-import { useUserStore } from "../stores";
+import { JWT_KEY_NAME } from "@/utils/constants";
+import { useApi } from "@/utils/api";
+import { useUserStore } from "@/stores";
 import { computed, watch } from "vue";
-import { SingleUserApiRes } from "../types/user";
+import { SingleUserApiRes } from "@/types/user";
 
 const userStore = useUserStore();
 const userDataUrl = `${import.meta.env.VITE_API_URL}/user/me`;

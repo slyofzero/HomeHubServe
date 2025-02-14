@@ -99,78 +99,10 @@
       </div>
 
       <!-- All Professionals Table -->
-      <div class="mb-4">
-        <div class="d-flex justify-content-between align-items-center">
-          <h4>All Professionals</h4>
-          <RouterLink to="/admin/professionals">View All</RouterLink>
-        </div>
-        <div class="table-responsive mt-3">
-          <table class="table table-bordered text-nowrap">
-            <thead>
-              <tr>
-                <th>ID</th>
-                <th>Name</th>
-                <th>Experience (Yrs)</th>
-                <th>Service Name</th>
-              </tr>
-            </thead>
-            <tbody v-if="professionals.length > 0">
-              <tr
-                v-for="professional in professionals"
-                :key="professional.id"
-                class="text-capitalize"
-              >
-                <td>{{ professional.id }}</td>
-                <td>{{ professional.name }}</td>
-                <td>{{ professional.experience }}</td>
-                <td>{{ professional.service_name }}</td>
-              </tr>
-            </tbody>
-            <tbody v-else>
-              <tr>
-                <td colspan="4">No professionals.</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
+      <ProfessionalsTable :professionals="professionals" />
 
       <!-- All Users Table -->
-      <div class="mb-4">
-        <div class="d-flex justify-content-between align-items-center">
-          <h4>All Users</h4>
-          <RouterLink to="/admin/users">View All</RouterLink>
-        </div>
-        <div class="table-responsive mt-3">
-          <table class="table table-bordered text-nowrap">
-            <thead>
-              <tr>
-                <th>ID</th>
-                <th>Name</th>
-                <th>Email</th>
-                <th>Joined On</th>
-                <th>Role</th>
-                <th>Status</th>
-              </tr>
-            </thead>
-            <tbody v-if="users.length > 0">
-              <tr v-for="user in users" :key="user.id" class="text-capitalize">
-                <td>{{ user.id }}</td>
-                <td>{{ user.name }}</td>
-                <td>{{ user.email }}</td>
-                <td>{{ user.joined_on }}</td>
-                <td>{{ user.role }}</td>
-                <td>{{ user.status }}</td>
-              </tr>
-            </tbody>
-            <tbody v-else>
-              <tr>
-                <td colspan="6">No users</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
+      <UsersTable :users="users" />
     </section>
   </div>
 
@@ -208,21 +140,25 @@
 
 <script lang="ts" setup>
 import { ref, watch } from "vue";
-import { useApi } from "../utils/api";
+import { useApi } from "@/utils/api";
 import {
   IProfessional,
   IService,
   ProfessionalApiRes,
   ServiceApiRes,
-} from "../types";
-import NewService from "../modals/service/NewService.vue";
-import EditService from "../modals/service/EditService.vue";
-import { useUserStore } from "../stores";
-import { JWT_KEY_NAME } from "../utils/constants";
-import router from "../router";
-import DeleteService from "../modals/service/DeleteService.vue";
-import { IUser, UserApiRes } from "../types/user";
-import ApplicationProfessional from "../modals/professional/ApplicationProfessional.vue";
+} from "@/types";
+import { useUserStore } from "@/stores";
+import { JWT_KEY_NAME } from "@/utils/constants";
+import router from "@/router";
+import { IUser, UsersApiRes } from "@/types/user";
+import ProfessionalsTable from "./professionals/ProfessionalsTable.vue";
+import UsersTable from "./users/UsersTable.vue";
+import {
+  ApplicationProfessional,
+  DeleteService,
+  EditService,
+  NewService,
+} from "@/modals";
 
 // Check if user is admin
 const userStore = useUserStore();
@@ -304,7 +240,7 @@ const refreshServices = () => {
 // -------------------- All Users --------------------
 const users = ref<IUser[]>([]);
 const usersUrl = `${import.meta.env.VITE_API_URL}/admin/users`; // prettier-ignore
-const { data: usersRes } = useApi<UserApiRes>(usersUrl);
+const { data: usersRes } = useApi<UsersApiRes>(usersUrl);
 
 watch(usersRes, () => {
   users.value = usersRes.value?.data.data || [];
