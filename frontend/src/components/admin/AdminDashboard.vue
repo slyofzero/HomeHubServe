@@ -151,14 +151,13 @@ import { useUserStore } from "@/stores";
 import { JWT_KEY_NAME } from "@/utils/constants";
 import router from "@/router";
 import { IUser, UsersApiRes } from "@/types/user";
-import ProfessionalsTable from "./professionals/ProfessionalsTable.vue";
-import UsersTable from "./users/UsersTable.vue";
 import {
   ApplicationProfessional,
   DeleteService,
   EditService,
   NewService,
 } from "@/modals";
+import { UsersTable } from "@/components/users";
 
 // Check if user is admin
 const userStore = useUserStore();

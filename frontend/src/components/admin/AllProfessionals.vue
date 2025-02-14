@@ -6,7 +6,7 @@
 import { ref, watch } from "vue";
 import { IProfessional, ProfessionalApiRes } from "@/types";
 import { useApi } from "@/utils/api";
-import ProfessionalsTable from "./ProfessionalsTable.vue";
+import { ProfessionalsTable } from "@/components/professionals";
 
 const professionals = ref<IProfessional[]>([]);
 const professoinalsUrl = `${import.meta.env.VITE_API_URL}/admin/professionals`; // prettier-ignore

@@ -1,11 +1,12 @@
 // router/index.ts
 import { createRouter, createWebHistory } from "vue-router";
 import Home from "@/components/Home.vue";
-import AdminDashboard from "@/components/AdminDashboard.vue";
-import ProfessionalDashboard from "@/components/professionals/ProfessionalDashboard.vue";
-import AllProfessionals from "@/components/professionals/AllProfessionals.vue";
 import { Login, Register } from "@/components/auth";
-import { ProfessionalRegister } from "@/components/professionals";
+import {
+  ProfessionalRegister,
+  ProfessionalDashboard,
+} from "@/components/professionals";
+import { AdminDashboard, AllProfessionals } from "@/components/admin";
 
 // Define routes
 const routes = [
@@ -14,6 +15,7 @@ const routes = [
     name: "Home",
     component: Home,
   },
+  // ------------------------------ Auth ------------------------------
   {
     path: "/register",
     name: "Register",
@@ -24,29 +26,27 @@ const routes = [
     name: "Login",
     component: Login,
   },
+  // ------------------------------ Admin ------------------------------
   {
     path: "/admin",
     name: "AdminDashboard",
     component: AdminDashboard,
-    meta: { requiresAuth: true },
   },
   {
     path: "/admin/professionals",
     name: "AllProfessionals",
     component: AllProfessionals,
-    meta: { requiresAuth: true },
   },
+  // ------------------------------ Professional ------------------------------
   {
     path: "/professional/register",
     name: "ProfessionalRegister",
     component: ProfessionalRegister,
-    meta: { requiresAuth: true },
   },
   {
     path: "/professional",
     name: "ProfessionalDashboard",
     component: ProfessionalDashboard,
-    meta: { requiresAuth: true },
   },
 ];
 
