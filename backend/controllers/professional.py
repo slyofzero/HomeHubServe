@@ -1,7 +1,7 @@
 from flask import Request, jsonify
 from models import db, Professional, User, Service
 from utils.auth import decode_token
-from controllers.service import to_dict
+from utils.models import to_dict
 import time
 from datetime import datetime
 from utils.time import format_datetime

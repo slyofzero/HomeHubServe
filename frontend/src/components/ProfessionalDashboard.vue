@@ -8,6 +8,7 @@
           <button
             @click="editProfile"
             class="d-flex gap-1 btn btn-secondary text-nowrap"
+            v-if="professionalData?.status !== 'REJECTED'"
           >
             Edit <span class="d-none d-md-block">Profile</span>
           </button>
@@ -44,11 +45,17 @@
             class="text-warning fw-bold"
             >{{ professionalData?.status }}</span
           >
-          <span v-else class="text-success fw-danger">{{
+          <span v-else class="text-danger fw-bold">{{
             professionalData?.status
           }}</span>
         </div>
       </div>
+
+      <p class="fw-semibold" v-if="professionalData?.status === 'REJECTED'">
+        Your application has been rejected. You can reapply after one week of
+        creating the previous application. To reapply you'd have to delete the
+        current profile and register again.
+      </p>
     </div>
 
     <div
@@ -185,8 +192,12 @@ const showEditModal = ref(false);
 const showDeleteModal = ref(false);
 
 const professoinalsUrl = `${import.meta.env.VITE_API_URL}/professional/me`; // prettier-ignore
-const { data: professionalRes, mutate: refreshProfessional } =
+const { data: professionalRes, mutate: mutateProfessional } =
   useApi<ProfessionalApiRes>(professoinalsUrl);
+
+const refreshProfessional = () => {
+  mutateProfessional();
+};
 
 const isActiveProfessional = computed(
   () => isProfessional && professionalData.value?.status === "ACCEPTED"

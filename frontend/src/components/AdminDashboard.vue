@@ -55,7 +55,7 @@
         </div>
       </div>
 
-      <!-- Professionals Table -->
+      <!-- Professional Applications Table -->
       <div class="mb-4">
         <h4>Professional Applications</h4>
         <div class="table-responsive mt-3">
@@ -81,16 +81,10 @@
                 <td>{{ professional.service_name }}</td>
                 <td>
                   <button
-                    @click="applicationAction(professional.id, 'ACCEPTED')"
-                    class="btn btn-success btn-sm me-2"
+                    @click="handleViewApplicationClick(professional.id)"
+                    class="btn btn-primary btn-sm me-2"
                   >
-                    Accept
-                  </button>
-                  <button
-                    @click="applicationAction(professional.id, 'REJECTED')"
-                    class="btn btn-warning btn-sm me-2"
-                  >
-                    Reject
+                    View
                   </button>
                 </td>
               </tr>
@@ -98,6 +92,80 @@
             <tbody v-else>
               <tr>
                 <td colspan="5">No pending professional applications.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- All Professionals Table -->
+      <div class="mb-4">
+        <div class="d-flex justify-content-between align-items-center">
+          <h4>All Professionals</h4>
+          <RouterLink to="/admin/professionals">View All</RouterLink>
+        </div>
+        <div class="table-responsive mt-3">
+          <table class="table table-bordered text-nowrap">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Experience (Yrs)</th>
+                <th>Service Name</th>
+              </tr>
+            </thead>
+            <tbody v-if="professionals.length > 0">
+              <tr
+                v-for="professional in professionals"
+                :key="professional.id"
+                class="text-capitalize"
+              >
+                <td>{{ professional.id }}</td>
+                <td>{{ professional.name }}</td>
+                <td>{{ professional.experience }}</td>
+                <td>{{ professional.service_name }}</td>
+              </tr>
+            </tbody>
+            <tbody v-else>
+              <tr>
+                <td colspan="4">No professionals.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- All Users Table -->
+      <div class="mb-4">
+        <div class="d-flex justify-content-between align-items-center">
+          <h4>All Users</h4>
+          <RouterLink to="/admin/users">View All</RouterLink>
+        </div>
+        <div class="table-responsive mt-3">
+          <table class="table table-bordered text-nowrap">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Joined On</th>
+                <th>Role</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody v-if="users.length > 0">
+              <tr v-for="user in users" :key="user.id" class="text-capitalize">
+                <td>{{ user.id }}</td>
+                <td>{{ user.name }}</td>
+                <td>{{ user.email }}</td>
+                <td>{{ user.joined_on }}</td>
+                <td>{{ user.role }}</td>
+                <td>{{ user.status }}</td>
+              </tr>
+            </tbody>
+            <tbody v-else>
+              <tr>
+                <td colspan="6">No users</td>
               </tr>
             </tbody>
           </table>
@@ -128,11 +196,19 @@
     @close="showDeleteModal = false"
     @refreshServices="refreshServices"
   />
+
+  <ApplicationProfessional
+    v-if="showApplicationModal"
+    :showModal="showApplicationModal"
+    :professional="applicationSelected"
+    @close="showApplicationModal = false"
+    @refreshProfessionalApplications="refreshProfessionalApplications"
+  />
 </template>
 
 <script lang="ts" setup>
 import { ref, watch } from "vue";
-import { clientPoster, useApi } from "../utils/api";
+import { useApi } from "../utils/api";
 import {
   IProfessional,
   IService,
@@ -145,6 +221,8 @@ import { useUserStore } from "../stores";
 import { JWT_KEY_NAME } from "../utils/constants";
 import router from "../router";
 import DeleteService from "../modals/service/DeleteService.vue";
+import { IUser, UserApiRes } from "../types/user";
+import ApplicationProfessional from "../modals/professional/ApplicationProfessional.vue";
 
 // Check if user is admin
 const userStore = useUserStore();
@@ -183,28 +261,54 @@ const handleDeleteClick = (serviceId: number) => {
 };
 
 // -------------------- Professional Applications --------------------
+const showApplicationModal = ref(false);
+const applicationSelected = ref<IProfessional | null>(null);
+
+const handleViewApplicationClick = (applicationId: number) => {
+  showApplicationModal.value = true;
+  applicationSelected.value = professionalApplications.value.find(
+    ({ id }) => id === applicationId
+  ) as IProfessional;
+};
+
 const professionalApplications = ref<IProfessional[]>([]);
-const professoinalsUrl = `${import.meta.env.VITE_API_URL}/professional/applications`; // prettier-ignore
+const professoinalsApplicationsUrl = `${import.meta.env.VITE_API_URL}/professional/applications`; // prettier-ignore
+const {
+  data: professionalsApplicationRes,
+  mutate: professionalsApplicationsMutate,
+} = useApi<ProfessionalApiRes>(professoinalsApplicationsUrl);
+
+const refreshProfessionalApplications = () => professionalsApplicationsMutate();
+
+watch(professionalsApplicationRes, () => {
+  professionalApplications.value =
+    professionalsApplicationRes.value?.data.data || [];
+});
+
+// -------------------- All Professionals --------------------
+const professionals = ref<IProfessional[]>([]);
+const professoinalsUrl = `${import.meta.env.VITE_API_URL}/admin/professionals`; // prettier-ignore
 const { data: professionalsRes, mutate: professionalsMutate } =
   useApi<ProfessionalApiRes>(professoinalsUrl);
+
+watch(professionalsRes, () => {
+  professionals.value = professionalsRes.value?.data.data || [];
+});
 
 const refreshServices = () => {
   servicesMutate();
   professionalsMutate();
+  professionalsApplicationsMutate();
 };
 
-watch(professionalsRes, () => {
-  professionalApplications.value = professionalsRes.value?.data.data || [];
+// -------------------- All Users --------------------
+const users = ref<IUser[]>([]);
+const usersUrl = `${import.meta.env.VITE_API_URL}/admin/users`; // prettier-ignore
+const { data: usersRes } = useApi<UserApiRes>(usersUrl);
+
+watch(usersRes, () => {
+  users.value = usersRes.value?.data.data || [];
 });
-
-const applicationAction = async (
-  professionalId: number,
-  status: IProfessional["status"]
-) => {
-  const url = `${import.meta.env.VITE_API_URL}/admin/professional/${professionalId}`; // prettier-ignore
-  const updateRes = await clientPoster(url, { status });
-  if (updateRes.response === 200) professionalsMutate();
-};
 </script>
 
 <style scoped>

@@ -41,7 +41,8 @@ import { ILoginRes } from "../types";
 import { apiPoster, clientFetcher } from "../utils/api";
 import { JWT_KEY_NAME } from "../utils/constants";
 import router from "../router";
-import { UserApiRes, useUserStore } from "../stores";
+import { useUserStore } from "../stores";
+import { SingleUserApiRes } from "../types/user";
 
 const form = ref({
   email: "",
@@ -64,7 +65,7 @@ async function loginUser(event: Event) {
       errorMessage.value = "";
       localStorage.setItem(JWT_KEY_NAME, res.data.token);
       const userDataUrl = `${import.meta.env.VITE_API_URL}/user/me`;
-      const data = await clientFetcher<UserApiRes>(userDataUrl);
+      const data = await clientFetcher<SingleUserApiRes>(userDataUrl);
       const userData = data.data.data;
       userStore.setUserInfo(userData);
 

@@ -1,9 +1,7 @@
 from flask import Request, jsonify
 from models import db, Service, Professional, User
 from utils.auth import decode_token
-
-def to_dict(object):
-    return {column.name: getattr(object, column.name) for column in object.__table__.columns}
+from utils.models import to_dict
 
 # Admin only
 def create_service(request: Request):

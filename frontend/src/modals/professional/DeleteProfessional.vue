@@ -72,6 +72,7 @@ import { clientDelete } from "../../utils/api";
 import router from "../../router";
 import { IApiRes } from "../../types";
 import { ref } from "vue";
+import { useUserStore } from "../../stores";
 
 defineProps({
   showModal: {
@@ -81,7 +82,7 @@ defineProps({
 });
 
 const emit = defineEmits(["close", "refreshProfessional"]);
-
+const userStore = useUserStore();
 const errorMessage = ref("");
 
 // Action functions
@@ -96,6 +97,7 @@ async function deleteProfile() {
     errorMessage.value = "";
     router.push("/");
     emit("refreshProfessional");
+    userStore.setUserRole("CUSTOMER");
   } else {
     errorMessage.value = res.data.message || "Couldn't delete profile.";
   }

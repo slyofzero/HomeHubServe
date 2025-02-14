@@ -72,12 +72,13 @@
 <script lang="ts" setup>
 import { JWT_KEY_NAME } from "../utils/constants";
 import { useApi } from "../utils/api";
-import { UserApiRes, useUserStore } from "../stores";
+import { useUserStore } from "../stores";
 import { computed, watch } from "vue";
+import { SingleUserApiRes } from "../types/user";
 
 const userStore = useUserStore();
 const userDataUrl = `${import.meta.env.VITE_API_URL}/user/me`;
-const { data: userDataRes } = useApi<UserApiRes>(userDataUrl);
+const { data: userDataRes } = useApi<SingleUserApiRes>(userDataUrl);
 
 watch(userDataRes, () => {
   const response = userDataRes.value?.response;

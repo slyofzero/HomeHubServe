@@ -93,7 +93,6 @@ watch(serviceRes, () => {
 // Register professional
 async function registerProfessional() {
   const url = `${import.meta.env.VITE_API_URL}/professional`;
-  console.log(form.value);
 
   try {
     const res = await clientPoster<IApiRes>(url, form.value);
@@ -103,6 +102,7 @@ async function registerProfessional() {
         res.data.message || "Invalid input. Please try again.";
     } else {
       errorMessage.value = "";
+      userStore.setUserRole("REG_PROFESSIONAL");
       router.push("/professional");
     }
   } catch (error) {
