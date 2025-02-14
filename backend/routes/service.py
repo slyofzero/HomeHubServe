@@ -17,7 +17,7 @@ def get_services_route():
 
 # To get, delete, update a service
 @service_bp.route("/<string:service_id>", methods=["GET", "DELETE", "PUT"])
-def delete_service_route(service_id):
+def service_route(service_id):
     if request.method == "GET":
         return get_single_service(request, int(service_id))
     elif request.method == "DELETE":

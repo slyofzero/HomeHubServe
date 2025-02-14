@@ -13,7 +13,7 @@
         <div class="modal-content p-4 d-flex flex-column gap-3">
           <!-- Modal Header -->
           <div class="modal-header border-0">
-            <h4 class="modal-title w-100 text-center">Delete Profile</h4>
+            <h4 class="modal-title w-100 text-center">Delete Service</h4>
             <button
               @click="closeModal"
               class="btn-close"
@@ -28,13 +28,13 @@
           >
 
           <p class="mb-0">
-            Are you sure you want to delete your profile? This action is
-            <strong>unrecoverable</strong>. You would lose all data regarding
-            the account, ratings, and service requests included.
+            Are you sure you want to delete this service? This action is
+            <strong>unrecoverable</strong>. All professional accounts related to
+            this service will consequently be delete.
           </p>
 
           <!-- Modal Body -->
-          <form @submit.prevent="deleteProfile">
+          <form @submit.prevent="deleteService">
             <!-- Modal Footer -->
             <div class="d-flex justify-content-center gap-3 mt-3">
               <button type="submit" class="btn btn-primary px-4">Yes</button>
@@ -73,14 +73,18 @@ import router from "../../router";
 import { IApiRes } from "../../types";
 import { ref } from "vue";
 
-defineProps({
+const props = defineProps({
   showModal: {
     type: Boolean,
     required: true,
   },
+  service: {
+    type: [Number, null],
+    required: true,
+  },
 });
 
-const emit = defineEmits(["close", "refreshProfessional"]);
+const emit = defineEmits(["close", "refreshServices"]);
 
 const errorMessage = ref("");
 
@@ -88,16 +92,16 @@ const errorMessage = ref("");
 async function closeModal() {
   emit("close");
 }
-async function deleteProfile() {
-  const url = `${import.meta.env.VITE_API_URL}/professional`;
+async function deleteService() {
+  const url = `${import.meta.env.VITE_API_URL}/service/${props.service}`;
   const res = await clientDelete<IApiRes>(url);
   if (res.response === 200) {
     closeModal();
     errorMessage.value = "";
     router.push("/");
-    emit("refreshProfessional");
+    emit("refreshServices");
   } else {
-    errorMessage.value = res.data.message || "Couldn't delete profile.";
+    errorMessage.value = res.data.message || "Couldn't delete service.";
   }
 }
 </script>

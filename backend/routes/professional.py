@@ -18,7 +18,7 @@ def get_professional_applications_route():
 
 # To manage a professional account
 @professional_bp.route("", methods=["POST", "DELETE", "PUT"])
-def create_professional_route():
+def professional_route():
     if request.method == "POST":
         return create_professional(request)
     elif request.method == "DELETE":

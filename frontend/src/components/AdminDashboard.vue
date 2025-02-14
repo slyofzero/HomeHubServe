@@ -38,7 +38,7 @@
                     Edit
                   </button>
                   <button
-                    @click="deleteService(service.id)"
+                    @click="handleDeleteClick(service.id)"
                     class="btn btn-danger btn-sm"
                   >
                     Delete
@@ -116,15 +116,23 @@
   <EditService
     v-if="showEditModal"
     :showModal="showEditModal"
-    :service="serviceToEdit"
+    :service="serviceSelected"
     @close="showEditModal = false"
+    @refreshServices="refreshServices"
+  />
+
+  <DeleteService
+    v-if="showDeleteModal"
+    :showModal="showDeleteModal"
+    :service="serviceSelected"
+    @close="showDeleteModal = false"
     @refreshServices="refreshServices"
   />
 </template>
 
 <script lang="ts" setup>
 import { ref, watch } from "vue";
-import { clientDelete, clientPoster, useApi } from "../utils/api";
+import { clientPoster, useApi } from "../utils/api";
 import {
   IProfessional,
   IService,
@@ -136,6 +144,7 @@ import EditService from "../modals/service/EditService.vue";
 import { useUserStore } from "../stores";
 import { JWT_KEY_NAME } from "../utils/constants";
 import router from "../router";
+import DeleteService from "../modals/service/DeleteService.vue";
 
 // Check if user is admin
 const userStore = useUserStore();
@@ -149,15 +158,14 @@ watch(userStore, () => {
 
 const showCreateModal = ref(false);
 const showEditModal = ref(false);
-const serviceToEdit = ref<number | null>(null);
+const showDeleteModal = ref(false);
+const serviceSelected = ref<number | null>(null);
 
 // -------------------- Services --------------------
 const services = ref<IService[]>([]);
 const servicesUrl = `${import.meta.env.VITE_API_URL}/service`;
 const { data: serviceRes, mutate: servicesMutate } =
   useApi<ServiceApiRes>(servicesUrl);
-
-const refreshServices = () => servicesMutate();
 
 watch(serviceRes, () => {
   const new_services = serviceRes.value?.data.data;
@@ -166,12 +174,12 @@ watch(serviceRes, () => {
 
 const handleEditClick = (serviceId: number) => {
   showEditModal.value = true;
-  serviceToEdit.value = serviceId;
+  serviceSelected.value = serviceId;
 };
 
-const deleteService = async (id: number) => {
-  const deleteRes = await clientDelete(`${servicesUrl}/${id}`);
-  if (deleteRes.response === 200) servicesMutate();
+const handleDeleteClick = (serviceId: number) => {
+  showDeleteModal.value = true;
+  serviceSelected.value = serviceId;
 };
 
 // -------------------- Professional Applications --------------------
@@ -179,6 +187,11 @@ const professionalApplications = ref<IProfessional[]>([]);
 const professoinalsUrl = `${import.meta.env.VITE_API_URL}/professional/applications`; // prettier-ignore
 const { data: professionalsRes, mutate: professionalsMutate } =
   useApi<ProfessionalApiRes>(professoinalsUrl);
+
+const refreshServices = () => {
+  servicesMutate();
+  professionalsMutate();
+};
 
 watch(professionalsRes, () => {
   professionalApplications.value = professionalsRes.value?.data.data || [];

@@ -55,7 +55,50 @@
       v-if="isProfessional"
       class="table-responsive d-flex flex-column gap-4"
     >
-      <h5 class="fw-semibold">Today's Service Requests</h5>
+      <h5 class="fw-semibold">Pending Service Requests</h5>
+      <table
+        class="table border-start border-end border-dark rounded overflow-hidden"
+      >
+        <thead class="table-dark">
+          <tr>
+            <th>ID</th>
+            <th>Customer Name</th>
+            <th>Email</th>
+            <th>Location</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>1</td>
+            <td>Service 1</td>
+            <td>.............</td>
+            <td>.............</td>
+            <td>Closed</td>
+          </tr>
+          <tr>
+            <td>2</td>
+            <td>Service 2</td>
+            <td>.............</td>
+            <td>.............</td>
+            <td>Requested</td>
+          </tr>
+          <tr>
+            <td>3</td>
+            <td>Service 3</td>
+            <td>.............</td>
+            <td>.............</td>
+            <td>Open</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div
+      v-if="isActiveProfessional"
+      class="table-responsive d-flex flex-column gap-4"
+    >
+      <h5 class="fw-semibold">Past Service Requests</h5>
       <table
         class="table border-start border-end border-dark rounded overflow-hidden"
       >
@@ -144,6 +187,11 @@ const showDeleteModal = ref(false);
 const professoinalsUrl = `${import.meta.env.VITE_API_URL}/professional/me`; // prettier-ignore
 const { data: professionalRes, mutate: refreshProfessional } =
   useApi<ProfessionalApiRes>(professoinalsUrl);
+
+const isActiveProfessional = computed(
+  () => isProfessional && professionalData.value?.status === "ACCEPTED"
+);
+
 watch(professionalRes, () => {
   professionalData.value = professionalRes.value?.data.data?.[0];
 });

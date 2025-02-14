@@ -13,7 +13,7 @@
       @submit.prevent="registerProfessional"
     >
       <div>
-        <label for="name" class="form-label">Experience</label>
+        <label for="name" class="form-label">Experience in years</label>
         <input
           type="text"
           id="experience"
