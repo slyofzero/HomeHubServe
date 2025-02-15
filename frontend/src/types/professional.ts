@@ -9,6 +9,7 @@ export interface IProfessional {
   service_name: string;
   status: "REJECTED" | "ACCEPTED" | "PENDING" | "BLOCKED";
   user_id: number;
+  jobs_done: number;
 }
 
 export interface IProfessionalMe extends IProfessional {

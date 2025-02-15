@@ -63,7 +63,7 @@ import { useApi } from "@/utils/api";
 import { IService, ServiceApiRes } from "@/types";
 
 const services = ref<IService[]>([]);
-const servicesUrl = `${import.meta.env.VITE_API_URL}/service`;
+const servicesUrl = `${import.meta.env.VITE_API_URL}/service/all`;
 const { data: serviceRes } = useApi<ServiceApiRes>(servicesUrl);
 
 watch(serviceRes, () => {

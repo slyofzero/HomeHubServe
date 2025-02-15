@@ -33,7 +33,9 @@
           <span>{{ professionalData?.description }}</span>
         </div>
 
-        <div>
+        <AccountStatus :account="professionalData" />
+
+        <!-- <div>
           <span>Account status</span> -
           <span
             v-if="professionalData?.status === 'ACCEPTED'"
@@ -48,7 +50,7 @@
           <span v-else class="text-danger fw-bold">{{
             professionalData?.status
           }}</span>
-        </div>
+        </div> -->
       </div>
 
       <p class="fw-semibold" v-if="professionalData?.status === 'REJECTED'">
@@ -168,6 +170,7 @@ import { JWT_KEY_NAME } from "@/utils/constants";
 import { useApi } from "@/utils/api";
 import { IProfessionalMe, ProfessionalApiRes } from "@/types";
 import { DeleteProfessional, EditProfessional } from "@/modals/professional";
+import { AccountStatus } from "../utils";
 
 // Check if user is admin
 const userStore = useUserStore();

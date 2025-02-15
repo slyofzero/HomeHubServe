@@ -82,7 +82,7 @@ const form = ref({
 const errorMessage = ref("");
 
 // Set services
-const servicesUrl = `${import.meta.env.VITE_API_URL}/service`;
+const servicesUrl = `${import.meta.env.VITE_API_URL}/service/all`;
 const { data: serviceRes } = useApi<ServiceApiRes>(servicesUrl);
 
 watch(serviceRes, () => {

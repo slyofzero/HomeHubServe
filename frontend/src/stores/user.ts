@@ -8,6 +8,16 @@ export const useUserStore = defineStore("user", {
   }),
   getters: {
     isLoggedIn: (state) => Boolean(state.user),
+    isAdmin: (state) => Boolean(state.user) && state.user.role === "ADMIN",
+    isProfessional: (state) => {
+      const role = state.user.role;
+      return (
+        Boolean(state.user) &&
+        (role === "PROFESSIONAL" || role === "REG_PROFESSIONAL")
+      );
+    },
+    isCustomer: (state) =>
+      Boolean(state.user) && state.user.role === "CUSTOMER",
   },
   actions: {
     setUserInfo(userInfo: IUser) {

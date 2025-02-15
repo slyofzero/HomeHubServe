@@ -11,7 +11,7 @@ def create_service_route():
     return create_service(request)
 
 # To get all services on the platform
-@service_bp.route("", methods=["GET"])
+@service_bp.route("/all", methods=["GET"])
 def get_services_route():
     return get_services(request)
 

@@ -37,6 +37,7 @@ class Professional(db.Model):
     rating = db.Column(db.Integer, default=0)
     service = db.relationship('Service', back_populates='professionals')
     created_on = db.Column(db.Integer, default=lambda: int(time.time()))
+    jobs_done = db.Column(db.Integer, default=0)
 
 Service.professionals = db.relationship('Professional', order_by=Professional.id, back_populates='service')
 

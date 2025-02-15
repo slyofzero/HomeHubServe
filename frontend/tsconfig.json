@@ -5,7 +5,8 @@
       "@/*": ["src/*"] // Maps @/ to the src/ folder
     },
     "module": "ESNext",
-    "moduleResolution": "node"
+    "moduleResolution": "node",
+    "allowSyntheticDefaultImports": true
   },
   "include": ["src"]
   // "references": [

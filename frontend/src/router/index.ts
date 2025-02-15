@@ -7,6 +7,8 @@ import {
   ProfessionalDashboard,
 } from "@/components/professionals";
 import { AdminDashboard, AllProfessionals, AllUsers } from "@/components/admin";
+import { useUserStore } from "@/stores";
+import { JWT_KEY_NAME } from "@/utils/constants";
 
 // Define routes
 const routes = [
@@ -31,16 +33,19 @@ const routes = [
     path: "/admin",
     name: "AdminDashboard",
     component: AdminDashboard,
+    meta: { requiresAdmin: true },
   },
   {
     path: "/admin/professionals",
     name: "AllProfessionals",
     component: AllProfessionals,
+    meta: { requiresAdmin: true },
   },
   {
     path: "/admin/users",
     name: "AllUsers",
     component: AllUsers,
+    meta: { requiresAdmin: true },
   },
   // ------------------------------ Professional ------------------------------
   {
@@ -59,6 +64,16 @@ const routes = [
 const router = createRouter({
   history: createWebHistory(),
   routes,
+});
+
+router.beforeEach((to, from, next) => {
+  const userStore = useUserStore();
+
+  if (to.meta.requiresAdmin && !userStore.isAdmin) {
+    next("/");
+  } else {
+    next();
+  }
 });
 
 export default router;

@@ -75,6 +75,7 @@ import { useApi } from "@/utils/api";
 import { useUserStore } from "@/stores";
 import { computed, watch } from "vue";
 import { SingleUserApiRes } from "@/types/user";
+import router from "@/router";
 
 const userStore = useUserStore();
 const userDataUrl = `${import.meta.env.VITE_API_URL}/user/me`;
@@ -100,10 +101,10 @@ const isProfessional = computed(() => {
 });
 
 function logout() {
-  console.log("logout");
   localStorage.removeItem(JWT_KEY_NAME);
   const userStore = useUserStore();
   userStore.clearUserInfo();
+  router.push("/login");
 }
 </script>
 

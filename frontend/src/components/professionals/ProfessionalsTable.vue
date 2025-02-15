@@ -14,6 +14,7 @@
             <th>Name</th>
             <th>Experience (Yrs)</th>
             <th>Service Name</th>
+            <th></th>
           </tr>
         </thead>
         <tbody v-if="professionals.length > 0">
@@ -26,6 +27,14 @@
             <td>{{ professional.name }}</td>
             <td>{{ professional.experience }}</td>
             <td>{{ professional.service_name }}</td>
+            <td class="d-flex justify-content-center">
+              <button
+                @click="handleViewProfessionalClick(professional.id)"
+                class="btn btn-primary btn-sm me-2"
+              >
+                View
+              </button>
+            </td>
           </tr>
         </tbody>
         <tbody v-else>
@@ -36,18 +45,44 @@
       </table>
     </div>
   </div>
+
+  <ViewProfessional
+    v-if="showViewModal"
+    :showModal="showViewModal"
+    :professional="professionalSelected"
+    @close="showViewModal = false"
+    @refreshProfessionals="refreshProfessionals"
+  />
 </template>
 
 <script lang="ts" setup>
+import { ViewProfessional } from "@/modals";
 import { IProfessional } from "@/types";
-import { computed } from "vue";
+import { computed, ref } from "vue";
 
 interface Props {
   professionals: IProfessional[];
   showViewAll?: any;
 }
 const { professionals, ...props } = defineProps<Props>();
+const emit = defineEmits(["refreshProfessionals"]);
+
 const showViewAll = computed(() =>
   typeof props.showViewAll === "boolean" ? props.showViewAll : true
 );
+
+const refreshProfessionals = () => {
+  emit("refreshProfessionals");
+};
+
+// View Modal
+const showViewModal = ref(false);
+const professionalSelected = ref<IProfessional | null>();
+
+const handleViewProfessionalClick = (professionalId: number) => {
+  showViewModal.value = true;
+  professionalSelected.value = professionals.find(
+    ({ id }) => id === professionalId
+  ) as IProfessional;
+};
 </script>

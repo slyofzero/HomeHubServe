@@ -1,5 +1,9 @@
 <template>
-  <ProfessionalsTable :professionals="professionals" :show-view-all="false" />
+  <ProfessionalsTable
+    :professionals="professionals"
+    :show-view-all="false"
+    @refreshProfessionals="mutateProfessionals"
+  />
   <Pagination :url="professionalsUrl" :limit="10" v-model="professionals" />
 </template>
 
@@ -15,7 +19,8 @@ const totalPages = ref<number>(1);
 
 const professionals = ref<IProfessional[]>([]);
 const professionalsUrl = `${import.meta.env.VITE_API_URL}/admin/professionals`;
-const { data: professionalsRes } = useApi<ProfessionalApiRes>(professionalsUrl);
+const { data: professionalsRes, mutate: mutateProfessionals } =
+  useApi<ProfessionalApiRes>(professionalsUrl);
 
 watch(page, async () => {
   const res = await clientFetcher<ProfessionalApiRes>(professionalsUrl);

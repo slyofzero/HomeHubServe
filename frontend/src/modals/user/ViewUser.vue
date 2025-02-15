@@ -1,9 +1,9 @@
 <template>
   <Modal :show-modal="props.showModal">
+    <!-- Modal Header -->
     <template #header>
-      <!-- Modal Header -->
       <div class="modal-header border-0">
-        <h4 class="modal-title w-100 text-center">Professional Application</h4>
+        <h4 class="modal-title w-100 text-center">User Profile</h4>
         <button
           @click="closeModal"
           class="btn-close"
@@ -12,6 +12,7 @@
       </div>
     </template>
 
+    <!-- Modal Body -->
     <template #body>
       <div class="d-flex flex-column gap-4">
         <span
@@ -23,42 +24,50 @@
         <div class="modal-body d-flex flex-column gap-2 text-capitalize">
           <div class="d-flex gap-2">
             <span>Name</span> -
-            <span>{{ professional?.name }}</span>
+            <span>{{ user?.name }}</span>
           </div>
           <div class="d-flex gap-2">
-            <span>Experience</span> -
-            <span>{{ professional?.experience }} years</span>
+            <span>Email</span> -
+            <span>{{ user?.email }}</span>
           </div>
           <div class="d-flex gap-2">
-            <span>Service</span> -
-            <span>{{ professional?.service_name }}</span>
+            <span>Pincode</span> -
+            <span>{{ user?.pincode }}</span>
           </div>
           <div class="d-flex gap-2">
-            <span>Description</span> -
-            <span>{{ professional?.description }}</span>
+            <span>Role</span> -
+            <span>{{ user?.role }}</span>
           </div>
           <div class="d-flex gap-2">
-            <span>Application Created On</span> -
-            <span>{{ formatUnixTimestamp(professional?.created_on) }}</span>
+            <span>Joined On</span> -
+            <span
+              >{{ formatUnixTimestamp(user?.joined_on) }} ({{
+                timeSince(user.joined_on)
+              }})</span
+            >
           </div>
+          <AccountStatus :account="user" />
         </div>
 
-        <!-- Modal Body -->
-        <form @submit.prevent="() => {}">
+        <form v-if="userStore.isAdmin" @submit.prevent="() => {}">
           <!-- Modal Footer -->
-          <div class="d-flex justify-content-center gap-3 mt-3">
+          <div class="d-flex justify-content-center gap-3 flex-wrap">
             <button
-              @click="applicationAction('ACCEPTED')"
+              @click="applicationAction('BLOCKED')"
               class="btn btn-success px-4"
+              v-if="user.status === 'ALLOWED' && userStore.isAdmin"
             >
-              Accept
+              Block
             </button>
+
             <button
-              @click="applicationAction('REJECTED')"
-              class="btn btn-danger px-4"
+              @click="applicationAction('BLOCKED')"
+              class="btn btn-success px-4"
+              v-if="user.status === 'BLOCKED' && userStore.isAdmin"
             >
-              Reject
+              Unblock
             </button>
+
             <button
               type="button"
               class="btn btn-secondary px-4"
@@ -75,31 +84,33 @@
 
 <script lang="ts" setup>
 import { clientPoster } from "@/utils/api";
-import { IApiRes, IProfessional } from "@/types";
+import { IApiRes, IUser } from "@/types";
 import { ref } from "vue";
-import { formatUnixTimestamp } from "@/utils/time";
+import { formatUnixTimestamp, timeSince } from "@/utils/time";
 import Modal from "../Modal.vue";
+import { useUserStore } from "@/stores";
+import { AccountStatus } from "@/components/utils";
 
 const props = defineProps<{
   showModal: boolean;
-  professional: IProfessional | null;
+  user: IUser | null;
 }>();
 
-const emit = defineEmits(["close", "refreshProfessionalApplications"]);
-
+const emit = defineEmits(["close", "refreshUsers"]);
 const errorMessage = ref("");
+const userStore = useUserStore();
 
 // Action functions
 async function closeModal() {
   emit("close");
 }
-async function applicationAction(status: IProfessional["status"]) {
-  const url = `${import.meta.env.VITE_API_URL}/admin/professional/${props.professional?.id}`; // prettier-ignore
+async function applicationAction(status: IUser["status"]) {
+  const url = `${import.meta.env.VITE_API_URL}/admin/user/${props.user?.id}`; // prettier-ignore
   const res = await clientPoster<IApiRes>(url, { status });
   if (res.response === 200) {
     closeModal();
     errorMessage.value = "";
-    emit("refreshProfessionalApplications");
+    emit("refreshUsers");
   } else {
     errorMessage.value = res.data.message || "Couldn't delete profile.";
   }

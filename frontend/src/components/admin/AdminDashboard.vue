@@ -160,16 +160,6 @@ import {
 import { UsersTable } from "@/components/users";
 import { ProfessionalsTable } from "@/components/professionals";
 
-// Check if user is admin
-const userStore = useUserStore();
-if (!userStore.isLoggedIn && !localStorage.getItem(JWT_KEY_NAME))
-  router.push("/login");
-
-watch(userStore, () => {
-  if (!userStore.isLoggedIn) router.push("/login");
-  else if (userStore.$state.user?.role !== "ADMIN") router.push("/");
-});
-
 const showCreateModal = ref(false);
 const showEditModal = ref(false);
 const showDeleteModal = ref(false);
@@ -177,12 +167,13 @@ const serviceSelected = ref<number | null>(null);
 
 // -------------------- Services --------------------
 const services = ref<IService[]>([]);
-const servicesUrl = `${import.meta.env.VITE_API_URL}/service`;
+const servicesUrl = `${import.meta.env.VITE_API_URL}/service/all`;
 const { data: serviceRes, mutate: servicesMutate } =
   useApi<ServiceApiRes>(servicesUrl);
 
 watch(serviceRes, () => {
   const new_services = serviceRes.value?.data.data;
+  console.log(new_services);
   services.value = new_services ? new_services : [];
 });
 
