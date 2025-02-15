@@ -3,8 +3,7 @@ import Header from "./components/Header.vue";
 </script>
 
 <template>
-  <Header></Header>
-
+  <Header />
   <div class="p-md-4 mt-4 mx-auto max-w"><RouterView></RouterView></div>
 </template>
 

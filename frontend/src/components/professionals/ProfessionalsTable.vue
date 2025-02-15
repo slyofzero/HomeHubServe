@@ -2,7 +2,9 @@
   <div class="mb-4">
     <div class="d-flex justify-content-between align-items-center">
       <h4>All Professionals</h4>
-      <RouterLink to="/admin/professionals">View All</RouterLink>
+      <RouterLink v-if="showViewAll" to="/admin/professionals"
+        >View All</RouterLink
+      >
     </div>
     <div class="table-responsive mt-3">
       <table class="table table-bordered text-nowrap">
@@ -28,7 +30,7 @@
         </tbody>
         <tbody v-else>
           <tr>
-            <td colspan="4">No professionals.</td>
+            <td class="text-center" colspan="4">No professionals.</td>
           </tr>
         </tbody>
       </table>
@@ -38,6 +40,14 @@
 
 <script lang="ts" setup>
 import { IProfessional } from "@/types";
+import { computed } from "vue";
 
-const { professionals } = defineProps<{ professionals: IProfessional[] }>();
+interface Props {
+  professionals: IProfessional[];
+  showViewAll?: any;
+}
+const { professionals, ...props } = defineProps<Props>();
+const showViewAll = computed(() =>
+  typeof props.showViewAll === "boolean" ? props.showViewAll : true
+);
 </script>

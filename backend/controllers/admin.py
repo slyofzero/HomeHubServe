@@ -2,6 +2,7 @@ from flask import Request, jsonify
 from utils.auth import decode_token
 from models import db, User, Professional, Service
 from utils.models import to_dict
+import math
 
 allowed_user_status = ('ALLOWED', 'BLOCKED')
 
@@ -79,6 +80,8 @@ def get_professionals(request: Request):
         elif user_token["role"] != "ADMIN":
             return jsonify({"message": "User not allowed"}), 401
         
+        total_count = Professional.query.count()
+        total_pages = math.ceil(total_count / limit)
         professionals = Professional.query.order_by(Professional.created_on.desc()).paginate(page=page, per_page=limit, error_out=False)
         professionals_json = []
         for professional in professionals:
@@ -88,12 +91,14 @@ def get_professionals(request: Request):
             del professional_dict["service_id"]
             professionals_json.append(professional_dict)
 
-        return jsonify({"message": f"Professionals fetched successfully", "data": professionals_json}), 200
+        return jsonify({"message": f"Professionals fetched successfully", "data": professionals_json, "page": page, "totalPages": total_pages}), 200
     except Exception as e:
         return jsonify({"message": str(e)}), 500
-    
+
 # Admin only
 def get_users(request: Request):
+    print("HERE")
+
     try:
         headers = request.headers
         auth_token = headers.get("authorization")
@@ -106,6 +111,8 @@ def get_users(request: Request):
         elif user_token["role"] != "ADMIN":
             return jsonify({"message": "User not allowed"}), 401
         
+        total_count = User.query.count()
+        total_pages = math.ceil(total_count / limit)
         users = User.query.order_by(User.joined_on.desc()).paginate(page=page, per_page=limit, error_out=False)
         users_json = []
         for user in users:
@@ -113,6 +120,6 @@ def get_users(request: Request):
             del user_dict["password"]
             users_json.append(user_dict)
 
-        return jsonify({"message": f"Users fetched successfully", "data": users_json}), 200
+        return jsonify({"message": f"Users fetched successfully", "data": users_json, "page": page, "totalPages": total_pages}), 200
     except Exception as e:
         return jsonify({"message": str(e)}), 500

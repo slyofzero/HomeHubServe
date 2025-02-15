@@ -2,7 +2,7 @@
   <div class="mb-4">
     <div class="d-flex justify-content-between align-items-center">
       <h4>All Users</h4>
-      <RouterLink to="/admin/users">View All</RouterLink>
+      <RouterLink v-if="showViewAll" to="/admin/users">View All</RouterLink>
     </div>
     <div class="table-responsive mt-3">
       <table class="table table-bordered text-nowrap">
@@ -28,7 +28,7 @@
         </tbody>
         <tbody v-else>
           <tr>
-            <td colspan="6">No users</td>
+            <td class="text-center" colspan="6">No users</td>
           </tr>
         </tbody>
       </table>
@@ -39,6 +39,14 @@
 <script lang="ts" setup>
 import { IUser } from "@/types/user";
 import { formatUnixTimestamp } from "@/utils/time";
+import { computed } from "vue";
 
-const { users } = defineProps<{ users: IUser[] }>();
+interface Props {
+  users: IUser[];
+  showViewAll?: any;
+}
+const { users, ...props } = defineProps<Props>();
+const showViewAll = computed(() =>
+  typeof props.showViewAll === "boolean" ? props.showViewAll : true
+);
 </script>

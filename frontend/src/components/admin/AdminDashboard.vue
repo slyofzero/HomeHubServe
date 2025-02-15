@@ -158,6 +158,7 @@ import {
   NewService,
 } from "@/modals";
 import { UsersTable } from "@/components/users";
+import { ProfessionalsTable } from "@/components/professionals";
 
 // Check if user is admin
 const userStore = useUserStore();

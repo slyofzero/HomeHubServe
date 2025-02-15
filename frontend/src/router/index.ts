@@ -6,7 +6,7 @@ import {
   ProfessionalRegister,
   ProfessionalDashboard,
 } from "@/components/professionals";
-import { AdminDashboard, AllProfessionals } from "@/components/admin";
+import { AdminDashboard, AllProfessionals, AllUsers } from "@/components/admin";
 
 // Define routes
 const routes = [
@@ -36,6 +36,11 @@ const routes = [
     path: "/admin/professionals",
     name: "AllProfessionals",
     component: AllProfessionals,
+  },
+  {
+    path: "/admin/users",
+    name: "AllUsers",
+    component: AllUsers,
   },
   // ------------------------------ Professional ------------------------------
   {

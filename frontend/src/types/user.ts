@@ -12,6 +12,8 @@ export interface IUser {
 export interface UsersApiRes {
   message: string;
   data: IUser[];
+  page: number;
+  totalPages: number;
 }
 
 export interface SingleUserApiRes {

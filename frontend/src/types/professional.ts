@@ -18,4 +18,6 @@ export interface IProfessionalMe extends IProfessional {
 export interface ProfessionalApiRes {
   message: string;
   data: IProfessional[];
+  page: number;
+  totalPages: number;
 }
