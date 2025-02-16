@@ -1,17 +1,18 @@
 <template>
   <main class="d-flex flex-column gap-5">
     <div class="d-flex flex-column gap-4 p-4 border border-dark rounded">
-      <h5 class="text-center fw-semibold">Looking for?</h5>
-      <div class="d-flex flex-column flex-md-row justify-content-center gap-4">
-        <RouterLink
-          v-for="service in services"
-          :to="`/service/${service.id}`"
-          :key="service.id"
-          class="p-4 border border-dark rounded service-width d-flex flex-column justify-content-center align-items-center gap-3 text-dark text-decoration-none"
+      <div class="position-relative">
+        <h5 class="text-center fw-semibold flex-grow-1">Looking for?</h5>
+        <RouterLink to="/services" class="position-absolute top-0 end-0"
+          >View All</RouterLink
         >
-          <h5 class="h5 fw-semibold">{{ service.name }}</h5>
-          <p>{{ service.description }}</p>
-        </RouterLink>
+      </div>
+
+      <div class="d-flex flex-column flex-md-row justify-content-center gap-4">
+        <ServiceCard
+          v-for="service in services.slice(0, 3)"
+          :service="service"
+        />
       </div>
     </div>
 
@@ -61,9 +62,11 @@
 import { ref, watch } from "vue";
 import { useApi } from "@/utils/api";
 import { IService, ServiceApiRes } from "@/types";
+import { RouterLink } from "vue-router";
+import { ServiceCard } from "./services";
 
 const services = ref<IService[]>([]);
-const servicesUrl = `${import.meta.env.VITE_API_URL}/service/all`;
+const servicesUrl = `${import.meta.env.VITE_API_URL}/service?limit=3`;
 const { data: serviceRes } = useApi<ServiceApiRes>(servicesUrl);
 
 watch(serviceRes, () => {

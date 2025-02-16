@@ -97,8 +97,6 @@ def get_professionals(request: Request):
 
 # Admin only
 def get_users(request: Request):
-    print("HERE")
-
     try:
         headers = request.headers
         auth_token = headers.get("authorization")

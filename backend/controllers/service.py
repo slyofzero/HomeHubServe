@@ -33,6 +33,17 @@ def create_service(request: Request):
 # All
 def get_services(request: Request):
     try:
+        page = request.args.get("page", 1, type=int)
+        limit = request.args.get("limit", 10, type=int)
+        services = Service.query.order_by(Service.name.asc()).paginate(page=page, per_page=limit, error_out=False)
+        services_json = [to_dict(service) for service in services]
+        return jsonify({"message": "Fetched services successfully", "data": services_json}), 200
+    except Exception as e: 
+        return jsonify({"message": str(e)}), 500
+    
+# All
+def get_all_services(request: Request):
+    try:
         services = Service.query.order_by(Service.name.asc()).all()
         services_json = [to_dict(service) for service in services]
         return jsonify({"message": "Fetched services successfully", "data": services_json}), 200

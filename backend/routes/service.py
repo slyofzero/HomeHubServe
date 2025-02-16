@@ -1,19 +1,22 @@
 from flask import Blueprint, request
-from controllers.service import create_service, get_services, delete_service, get_single_service, update_service
+from controllers.service import create_service, get_services, delete_service, get_single_service, update_service, get_all_services
 
 service_bp = Blueprint(
     "service_bp", __name__, static_folder="static", template_folder="templates"
 )
 
 # For the login form
-@service_bp.route("", methods=["POST"])
+@service_bp.route("", methods=["POST", "GET"])
 def create_service_route():
-    return create_service(request)
+    if request.method == "GET":
+        return get_services(request)
+    elif request.method == "POST":
+        return create_service(request)
 
 # To get all services on the platform
 @service_bp.route("/all", methods=["GET"])
-def get_services_route():
-    return get_services(request)
+def get_all_services_route():
+    return get_all_services(request)
 
 # To get, delete, update a service
 @service_bp.route("/<string:service_id>", methods=["GET", "DELETE", "PUT"])

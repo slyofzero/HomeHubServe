@@ -117,7 +117,7 @@ async function closeModal() {
   emit("close");
 }
 async function addModal() {
-  const url = `${import.meta.env.VITE_API_URL}/service/all`;
+  const url = `${import.meta.env.VITE_API_URL}/service`;
   const res = await clientPoster<IApiRes>(url, formData.value);
   if (res.response === 200) {
     closeModal();

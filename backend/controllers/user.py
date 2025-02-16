@@ -1,7 +1,6 @@
 from flask import Request, jsonify
 from utils.auth import decode_token
 from models import User, Professional, db
-from utils.models import to_dict
 
 common_fields_with_professional = ["name", "pincode"]
 

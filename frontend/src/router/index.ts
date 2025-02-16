@@ -9,6 +9,7 @@ import {
 import { AdminDashboard, AllProfessionals, AllUsers } from "@/components/admin";
 import { useUserStore } from "@/stores";
 import { JWT_KEY_NAME } from "@/utils/constants";
+import { AllServices } from "@/components/services";
 
 // Define routes
 const routes = [
@@ -52,6 +53,17 @@ const routes = [
     path: "/professional/register",
     name: "ProfessionalRegister",
     component: ProfessionalRegister,
+  },
+  {
+    path: "/professional",
+    name: "ProfessionalDashboard",
+    component: ProfessionalDashboard,
+  },
+  // ------------------------------ Services ------------------------------
+  {
+    path: "/services",
+    name: "AllServices",
+    component: AllServices,
   },
   {
     path: "/professional",

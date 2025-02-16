@@ -167,7 +167,7 @@ const serviceSelected = ref<number | null>(null);
 
 // -------------------- Services --------------------
 const services = ref<IService[]>([]);
-const servicesUrl = `${import.meta.env.VITE_API_URL}/service/all`;
+const servicesUrl = `${import.meta.env.VITE_API_URL}/service`;
 const { data: serviceRes, mutate: servicesMutate } =
   useApi<ServiceApiRes>(servicesUrl);
 
