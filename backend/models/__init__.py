@@ -22,7 +22,7 @@ class Service(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.String, nullable=False)
     description = db.Column(db.Text, nullable=False)
-    price = db.Column(db.Integer, nullable=False)
+    base_price = db.Column(db.Integer, nullable=False)
 
 class Professional(db.Model):
     __tablename__ = 'professional'
@@ -33,6 +33,7 @@ class Professional(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False, unique=True)
     description = db.Column(db.Text, nullable=False)
     pincode = db.Column(db.Integer, nullable=False)
+    price = db.Column(db.Integer, nullable=False)
     status = db.Column(db.String, db.CheckConstraint("status IN ('REJECTED', 'PENDING', 'ACCEPTED', 'BLOCKED')"), default='PENDING')
     rating = db.Column(db.Integer, default=0)
     service = db.relationship('Service', back_populates='professionals')

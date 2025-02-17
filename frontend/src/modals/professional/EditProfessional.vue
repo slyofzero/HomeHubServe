@@ -29,6 +29,16 @@
         <div>
           <form @submit.prevent="editProfile">
             <div>
+              <label for="pincode" class="form-label">Pincode</label>
+              <input id="pincode" v-model="form.pincode" class="form-control" />
+            </div>
+
+            <div>
+              <label for="price" class="form-label">Price</label>
+              <input id="price" v-model="form.price" class="form-control" />
+            </div>
+
+            <div>
               <label for="description" class="form-label">Description</label>
               <textarea
                 id="description"
@@ -57,27 +67,32 @@
 </template>
 
 <script lang="ts" setup>
-import { clientPut } from "@/utils/api";
+import { clientFetcher, clientPut, useApi } from "@/utils/api";
 import router from "@/router";
-import { IApiRes } from "@/types";
-import { ref } from "vue";
+import { IApiRes, IProfessional, IService, ServiceApiRes } from "@/types";
+import { ref, watch } from "vue";
 import Modal from "../Modal.vue";
 
-const props = defineProps({
-  showModal: {
-    type: Boolean,
-    required: true,
-  },
-});
+interface Props {
+  showModal: boolean;
+  professional: IProfessional;
+}
+const props = defineProps<Props>();
 
 const emit = defineEmits(["close", "refreshProfessional"]);
 
 const form = ref({
-  experience: "",
-  service_id: "",
-  description: "",
+  pincode: props.professional.pincode,
+  description: props.professional.description,
+  price: props.professional.price,
 });
 const errorMessage = ref("");
+const selectedService = ref<IService>();
+const url = `${import.meta.env.VITE_API_URL}/service/${props.professional.service_id}` // prettier-ignore
+const { data: serviceRes } = useApi<ServiceApiRes>(url);
+watch(serviceRes, () => {
+  selectedService.value = serviceRes.value.data.data[0];
+});
 
 // Action functions
 async function closeModal() {
@@ -86,6 +101,15 @@ async function closeModal() {
 async function editProfile() {
   const url = `${import.meta.env.VITE_API_URL}/professional`;
   const res = await clientPut<IApiRes>(url, form.value);
+
+  if (form.value.price) {
+    const base_price = selectedService.value.base_price;
+    if (form.value.price < base_price) {
+      errorMessage.value = `Price can't be lower than base price of ${selectedService.value.base_price}`;
+      return;
+    }
+  }
+
   if (res.response === 200) {
     closeModal();
     errorMessage.value = "";

@@ -37,9 +37,19 @@
             :key="index"
             :value="service.id"
           >
-            {{ service.name }} (Rs {{ service.price }})
+            {{ service.name }} (Base price - Rs {{ service.base_price }})
           </option>
         </select>
+      </div>
+      <div>
+        <label for="name" class="form-label">Price</label>
+        <input
+          type="text"
+          id="price"
+          v-model="form.price"
+          class="form-control"
+          required
+        />
       </div>
       <div>
         <label for="description" class="form-label">Description</label>
@@ -66,17 +76,19 @@ import { JWT_KEY_NAME } from "@/utils/constants";
 
 // Check if user is logged in or allowed
 const userStore = useUserStore();
-if (!userStore.isLoggedIn && !localStorage.getItem(JWT_KEY_NAME))
-  router.push("/login");
+// if (!userStore.isLoggedIn && !localStorage.getItem(JWT_KEY_NAME))
+//   router.push("/login");
 
-watch(userStore, () => {
-  if (!userStore.isLoggedIn) router.push("/login");
-});
+// watch(userStore, () => {
+//   if (!userStore.isLoggedIn) router.push("/login");
+// });
 
 const services = ref<IService[]>([]);
+const selectedService = ref<IService>();
 const form = ref({
   experience: "",
   service_id: "",
+  price: "",
   description: "",
 });
 const errorMessage = ref("");
@@ -90,9 +102,23 @@ watch(serviceRes, () => {
   services.value = new_services ? new_services : [];
 });
 
+watch(
+  () => form.value.service_id,
+  (newId) => {
+    const service = services.value.find(({ id }) => id === Number(newId));
+    selectedService.value = service;
+    form.value.price = String(service.base_price);
+  }
+);
+
 // Register professional
 async function registerProfessional() {
   const url = `${import.meta.env.VITE_API_URL}/professional`;
+
+  if (Number(form.value.price) < Number(selectedService.value.base_price)) {
+    errorMessage.value = `Price can't be lower than base price of ${selectedService.value.base_price}`;
+    return;
+  }
 
   try {
     const res = await clientPoster<IApiRes>(url, form.value);

@@ -16,8 +16,10 @@
           </button>
         </div>
         <div class="table-responsive mt-3">
-          <table class="table table-bordered text-nowrap">
-            <thead>
+          <table
+            class="table border-start border-end border-dark rounded overflow-hidden text-nowrap"
+          >
+            <thead class="table-dark">
               <tr>
                 <th>ID</th>
                 <th>Service Name</th>
@@ -29,7 +31,7 @@
               <tr v-for="service in services" :key="service.id">
                 <td>{{ service.id }}</td>
                 <td>{{ service.name }}</td>
-                <td>{{ service.price }}</td>
+                <td>{{ service.base_price }}</td>
                 <td class="d-flex justify-content-center">
                   <button
                     @click="handleEditClick(service.id)"
@@ -59,8 +61,10 @@
       <div class="mb-4">
         <h4>Professional Applications</h4>
         <div class="table-responsive mt-3">
-          <table class="table table-bordered text-nowrap">
-            <thead>
+          <table
+            class="table border-start border-end border-dark rounded overflow-hidden text-nowrap"
+          >
+            <thead class="table-dark">
               <tr>
                 <th>ID</th>
                 <th>Name</th>
@@ -147,9 +151,6 @@ import {
   ProfessionalApiRes,
   ServiceApiRes,
 } from "@/types";
-import { useUserStore } from "@/stores";
-import { JWT_KEY_NAME } from "@/utils/constants";
-import router from "@/router";
 import { IUser, UsersApiRes } from "@/types/user";
 import {
   ApplicationProfessional,

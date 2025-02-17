@@ -54,6 +54,10 @@
             <span>Rating</span> -
             <span>{{ professional.rating }}</span>
           </div>
+          <div class="d-flex gap-2">
+            <span>Pincode</span> -
+            <span>{{ professional.pincode }}</span>
+          </div>
           <AccountStatus :account="professional" />
         </div>
 

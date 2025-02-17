@@ -17,6 +17,7 @@
           </button>
         </div>
       </div>
+
       <div class="d-flex flex-column gap-2">
         <div>
           <span class="text-capitalize text-decoration-underline">{{
@@ -33,24 +34,17 @@
           <span>{{ professionalData?.description }}</span>
         </div>
 
-        <AccountStatus :account="professionalData" />
+        <div>
+          <span>Pincode</span> -
+          <span>{{ professionalData?.pincode }}</span>
+        </div>
 
-        <!-- <div>
-          <span>Account status</span> -
-          <span
-            v-if="professionalData?.status === 'ACCEPTED'"
-            class="text-success fw-bold"
-            >{{ professionalData?.status }}</span
-          >
-          <span
-            v-else-if="professionalData?.status === 'PENDING'"
-            class="text-warning fw-bold"
-            >{{ professionalData?.status }}</span
-          >
-          <span v-else class="text-danger fw-bold">{{
-            professionalData?.status
-          }}</span>
-        </div> -->
+        <div>
+          <span>Price</span> -
+          <span>Rs {{ professionalData?.price }}</span>
+        </div>
+
+        <AccountStatus :account="professionalData" />
       </div>
 
       <p class="fw-semibold" v-if="professionalData?.status === 'REJECTED'">
@@ -150,6 +144,7 @@
   <EditProfessional
     v-if="showEditModal"
     :showModal="showEditModal"
+    :professional="professionalData"
     @close="showEditModal = false"
     @refreshProfessional="refreshProfessional"
   />
@@ -164,32 +159,30 @@
 
 <script lang="ts" setup>
 import { computed, ref, watch } from "vue";
-import router from "@/router";
 import { useUserStore } from "@/stores";
-import { JWT_KEY_NAME } from "@/utils/constants";
 import { useApi } from "@/utils/api";
-import { IProfessionalMe, ProfessionalApiRes } from "@/types";
+import { IProfessional, ProfessionalApiRes } from "@/types";
 import { DeleteProfessional, EditProfessional } from "@/modals/professional";
 import { AccountStatus } from "../utils";
 
 // Check if user is admin
 const userStore = useUserStore();
-if (!userStore.isLoggedIn && !localStorage.getItem(JWT_KEY_NAME))
-  router.push("/login");
+// if (!userStore.isLoggedIn && !localStorage.getItem(JWT_KEY_NAME))
+//   router.push("/login");
 
-watch(userStore, () => {
-  const role = userStore.$state.user?.role;
-  if (!userStore.isLoggedIn) router.push("/login");
-  else if (role !== "PROFESSIONAL" && role !== "REG_PROFESSIONAL")
-    router.push("/");
-});
+// watch(userStore, () => {
+//   const role = userStore.$state.user?.role;
+//   if (!userStore.isLoggedIn) router.push("/login");
+//   else if (role !== "PROFESSIONAL" && role !== "REG_PROFESSIONAL")
+//     router.push("/");
+// });
 
 const isProfessional = computed(
   () => userStore.$state.user?.role === "PROFESSIONAL"
 );
 
 // Get professional data
-const professionalData = ref<IProfessionalMe>();
+const professionalData = ref<IProfessional>();
 const showEditModal = ref(false);
 const showDeleteModal = ref(false);
 

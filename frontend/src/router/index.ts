@@ -9,7 +9,7 @@ import {
 import { AdminDashboard, AllProfessionals, AllUsers } from "@/components/admin";
 import { useUserStore } from "@/stores";
 import { JWT_KEY_NAME } from "@/utils/constants";
-import { AllServices } from "@/components/services";
+import { AllServices, ServiceProfessionals } from "@/components/services";
 
 // Define routes
 const routes = [
@@ -34,19 +34,16 @@ const routes = [
     path: "/admin",
     name: "AdminDashboard",
     component: AdminDashboard,
-    meta: { requiresAdmin: true },
   },
   {
     path: "/admin/professionals",
     name: "AllProfessionals",
     component: AllProfessionals,
-    meta: { requiresAdmin: true },
   },
   {
     path: "/admin/users",
     name: "AllUsers",
     component: AllUsers,
-    meta: { requiresAdmin: true },
   },
   // ------------------------------ Professional ------------------------------
   {
@@ -66,9 +63,9 @@ const routes = [
     component: AllServices,
   },
   {
-    path: "/professional",
-    name: "ProfessionalDashboard",
-    component: ProfessionalDashboard,
+    path: "/service/:id",
+    name: "ServiceProfessionals",
+    component: ServiceProfessionals,
   },
 ];
 

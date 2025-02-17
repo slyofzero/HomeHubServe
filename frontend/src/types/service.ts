@@ -2,7 +2,7 @@ export interface IService {
   id: number;
   name: string;
   description: string;
-  price: number;
+  base_price: number;
 }
 
 export interface ServiceApiRes {

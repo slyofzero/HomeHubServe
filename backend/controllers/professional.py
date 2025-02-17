@@ -8,21 +8,24 @@ from utils.time import format_datetime
 
 one_week_seconds = 7 * 24 * 60 * 60
 
+required_create_professional_fields = ["experience", "service_id", "description", "price"]
 # User only
 def create_professional(request: Request):
     try:
         body = request.get_json()
         headers = request.headers
-        experience, service_id, description = (body.get(key) for key in ["experience", "service_id", "description"])
+        experience, service_id, description, price = (body.get(key) for key in required_create_professional_fields)
         auth_token = headers.get("authorization")
         user, is_token_valid = decode_token(auth_token)
 
         if not is_token_valid:
             return jsonify({"message": user["message"]}), 401
-        
+                
         user = User.query.filter_by(email = user["email"]).first()
         if user.status == "BLOCKED":
             return jsonify({"message": "Your user account is blocked currently. You can't register as a professional."}), 401
+        elif not all([experience, service_id, description, price]):
+            return jsonify({"message": f"Missing required fields, make sure all fields are entered - {', '.join(required_create_professional_fields)}"}), 400
 
         professional = Professional.query.filter_by(user_id=user.id).first()
         if professional is not None:
@@ -44,7 +47,8 @@ def create_professional(request: Request):
             experience=experience,
             service_id=service_id,
             pincode=user.pincode,
-            user_id=user.id
+            user_id=user.id,
+            price=price
         )
         setattr(user, "role", "REG_PROFESSIONAL")
         db.session.add(new_professional)
@@ -166,14 +170,12 @@ def update_professional(request: Request):
         auth_token = headers.get("authorization")
         user, is_token_valid = decode_token(auth_token)
         body = request.get_json()
-        new_description = body["description"]
+        new_description, new_pincode, price = body["description"], body["pincode"], body["price"]
 
         if not is_token_valid:
             return jsonify({"message": user["message"]}), 401
         elif not body:
             return jsonify({"message": "No data provided for update"}), 400
-        elif new_description == "":
-            return jsonify({"message": f"Description can't be empty."}), 400
         
         email = user["email"]
         user_data = User.query.filter_by(email=email).first()
@@ -182,30 +184,14 @@ def update_professional(request: Request):
         if professional is None:
             return jsonify({"message": f"Professional account for {email} not found"}), 404
 
-        setattr(professional, "description", new_description)
+        if (new_description):
+            setattr(professional, "description", new_description)
+        if (new_pincode):
+            setattr(professional, "pincode", new_pincode)
+        if (price):
+            setattr(professional, "price", price)
         db.session.commit()
         return jsonify({"message": f"Professional {professional.id} updated"}), 200
 
-    except Exception as e: 
-        return jsonify({"message": str(e)}), 500
-
-# All
-def get_professionals_for_service(request: Request, service_id: int):
-    try:
-        headers = request.headers
-        auth_token = headers.get("authorization")
-        user, is_token_valid = decode_token(auth_token)
-
-        if not is_token_valid:
-            return jsonify({"message": user["message"]}), 401
-        
-        service = Service.query.filter_by(id=service_id).first()
-        
-        if service is None:
-            return jsonify({"message": f"Service Id {service_id} not found"}), 404
-
-        professionals = Professional.query.filter_by(service_id=service_id, status="ACCEPTED").all()
-        professional_json = [to_dict(professional) for professional in professionals]
-        return jsonify({"message": "Fetched professional successfully", "data": professional_json}), 200
     except Exception as e: 
         return jsonify({"message": str(e)}), 500

@@ -7,13 +7,17 @@
       >
     </div>
     <div class="table-responsive mt-3">
-      <table class="table table-bordered text-nowrap">
-        <thead>
+      <table
+        class="table border-start border-end border-dark rounded overflow-hidden text-nowrap"
+      >
+        <thead class="table-dark">
           <tr>
             <th>ID</th>
             <th>Name</th>
             <th>Experience (Yrs)</th>
+            <th>Pincode</th>
             <th>Service Name</th>
+            <th>Price</th>
             <th></th>
           </tr>
         </thead>
@@ -26,7 +30,9 @@
             <td>{{ professional.id }}</td>
             <td>{{ professional.name }}</td>
             <td>{{ professional.experience }}</td>
+            <td>{{ professional.pincode }}</td>
             <td>{{ professional.service_name }}</td>
+            <td>Rs {{ professional.price }}</td>
             <td class="d-flex justify-content-center">
               <button
                 @click="handleViewProfessionalClick(professional.id)"

@@ -54,7 +54,7 @@
               type="number"
               id="basePrice"
               class="form-control"
-              v-model="formData.price"
+              v-model="formData.base_price"
               placeholder="Enter base price"
               required
             />
@@ -106,7 +106,7 @@ const emit = defineEmits(["close", "refreshServices"]);
 const formData = ref({
   name: "",
   description: "",
-  price: "",
+  base_price: "",
 });
 const errorMessage = ref("");
 
@@ -135,7 +135,7 @@ watch(serviceData, (newData) => {
     if (serviceData) {
       formData.value.name = serviceData.name;
       formData.value.description = serviceData.description;
-      formData.value.price = String(serviceData.price);
+      formData.value.base_price = String(serviceData.base_price);
     }
   }
 });

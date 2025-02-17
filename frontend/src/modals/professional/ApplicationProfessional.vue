@@ -38,6 +38,10 @@
             <span>{{ professional?.description }}</span>
           </div>
           <div class="d-flex gap-2">
+            <span>Price</span> -
+            <span>Rs {{ professional?.price }}</span>
+          </div>
+          <div class="d-flex gap-2">
             <span>Application Created On</span> -
             <span>{{ formatUnixTimestamp(professional?.created_on) }}</span>
           </div>

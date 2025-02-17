@@ -1,5 +1,13 @@
 from flask import Blueprint, request
-from controllers.service import create_service, get_services, delete_service, get_single_service, update_service, get_all_services
+from controllers.service import (
+    create_service, 
+    get_services, 
+    delete_service, 
+    get_single_service, 
+    update_service, 
+    get_all_services, 
+    get_professionals_for_service
+    )
 
 service_bp = Blueprint(
     "service_bp", __name__, static_folder="static", template_folder="templates"
@@ -27,4 +35,8 @@ def service_route(service_id):
         return delete_service(request, int(service_id))
     elif request.method == "PUT":
         return update_service(request, int(service_id))
-    
+
+# To get professionals for a service
+@service_bp.route("/<string:service_id>/professionals", methods=["GET"])
+def get_service_professionals_route(service_id):
+    return get_professionals_for_service(request, int(service_id))

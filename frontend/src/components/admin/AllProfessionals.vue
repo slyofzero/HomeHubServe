@@ -1,10 +1,12 @@
 <template>
-  <ProfessionalsTable
-    :professionals="professionals"
-    :show-view-all="false"
-    @refreshProfessionals="mutateProfessionals"
-  />
-  <Pagination :url="professionalsUrl" :limit="10" v-model="professionals" />
+  <div class="container">
+    <ProfessionalsTable
+      :professionals="professionals"
+      :show-view-all="false"
+      @refreshProfessionals="mutateProfessionals"
+    />
+    <Pagination :url="professionalsUrl" :limit="10" v-model="professionals" />
+  </div>
 </template>
 
 <script lang="ts" setup>

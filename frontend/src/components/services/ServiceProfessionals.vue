@@ -1,9 +1,7 @@
 <template>
-  <div class="mb-4">
-    <div class="d-flex justify-content-between align-items-center">
-      <h4>All Users</h4>
-      <RouterLink v-if="showViewAll" to="/admin/users">View All</RouterLink>
-    </div>
+  <main class="d-flex flex-column gap-4 p-4 border border-dark rounded">
+    <h4 class="text-center">Best {{ service.name }} packages</h4>
+
     <div class="table-responsive mt-3">
       <table
         class="table border-start border-end border-dark rounded overflow-hidden text-nowrap"
@@ -19,7 +17,7 @@
             <th></th>
           </tr>
         </thead>
-        <tbody v-if="users.length > 0">
+        <!-- <tbody v-if="users.length > 0">
           <tr v-for="user in users" :key="user.id" class="text-capitalize">
             <td>{{ user.id }}</td>
             <td>{{ user.name }}</td>
@@ -36,52 +34,44 @@
               </button>
             </td>
           </tr>
-        </tbody>
-        <tbody v-else>
+        </tbody> -->
+        <!-- <tbody v-else>
           <tr>
-            <td class="text-center" colspan="6">No users</td>
+            <td class="text-center" colspan="6">No professionals found.</td>
           </tr>
-        </tbody>
+        </tbody> -->
       </table>
     </div>
-  </div>
+  </main>
 
-  <ViewUser
+  <!-- <ViewUser
     v-if="showViewModal"
     :showModal="showViewModal"
     :user="userSelected"
     @close="showViewModal = false"
     @refreshUsers="refreshUsers"
-  />
+  /> -->
 </template>
 
 <script lang="ts" setup>
-import { ViewUser } from "@/modals/user";
-import { IUser } from "@/types/user";
-import { formatUnixTimestamp } from "@/utils/time";
-import { computed, ref } from "vue";
+import { IProfessional, IService, ServiceProfessionalApiRes } from "@/types";
+import { useApi } from "@/utils/api";
+import { computed, ref, watch } from "vue";
+import { useRoute } from "vue-router";
 
-interface Props {
-  users: IUser[];
-  showViewAll?: any;
-}
-const { users, ...props } = defineProps<Props>();
-const emit = defineEmits(["refreshUsers"]);
-
-const showViewAll = computed(() =>
-  typeof props.showViewAll === "boolean" ? props.showViewAll : true
+const route = useRoute();
+const service = ref<IService>();
+const professionals = ref<IProfessional[]>([]);
+const professionalsUrl = computed(
+  () =>
+    `${import.meta.env.VITE_API_URL}/service/${route.params.id}/professionals`
 );
-
-const refreshUsers = () => {
-  emit("refreshUsers");
-};
-
-// View Modal
-const showViewModal = ref(false);
-const userSelected = ref<IUser | null>();
-
-const handleViewUserClick = (userId: number) => {
-  showViewModal.value = true;
-  userSelected.value = users.find(({ id }) => id === userId) as IUser;
-};
+const { data: professionalsRes } = useApi<ServiceProfessionalApiRes>(
+  professionalsUrl.value
+);
+watch(professionalsRes, () => {
+  const data = professionalsRes.value.data.data;
+  service.value = data.service;
+  professionals.value = data.professionals;
+});
 </script>
